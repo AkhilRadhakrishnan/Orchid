@@ -85,6 +85,7 @@ class MyAppoinmentCard extends StatelessWidget {
                   } else {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) => Appointment(doctor: upcoming)));
+                    // replace upcoming with doctor object
                   }
                 },
               ),
