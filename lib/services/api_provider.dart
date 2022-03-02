@@ -1,0 +1,160 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:orchid/models/date_timeslot.dart';
+import 'package:orchid/models/doctor.dart';
+import 'package:orchid/models/my_appoinment.dart';
+import 'package:orchid/models/nurse.dart';
+import 'package:orchid/models/service_slider.dart';
+import 'package:orchid/models/services.dart';
+import 'package:orchid/models/slider.dart';
+import 'package:orchid/models/specialities.dart';
+import 'network.dart';
+
+class ApiProvider {
+  static const baseUrl = "https://servconmain.com/orchid/api/";
+
+  Network auth = Network();
+
+
+  Future<DoctorModel?> getDoctors() async {
+    http.Response response = await auth.getRequest(url: baseUrl + "Docters");
+    if (response.statusCode == 200) {
+      return DoctorModel.fromJson(json.decode(response.body));
+    }
+    return null;
+  }
+
+  Future<NurseModel?> getNurses() async {
+    http.Response response = await auth.getRequest(url: baseUrl + "nurse");
+    if (response.statusCode == 200) {
+      return NurseModel.fromJson(json.decode(response.body));
+    }
+    return null;
+  }
+
+  Future<SpecialitiesModel?> getSpecialities() async {
+    http.Response response =
+        await auth.getRequest(url: baseUrl + "specialities");
+    if (response.statusCode == 200) {
+      return SpecialitiesModel.fromJson(json.decode(response.body));
+    }
+    return null;
+  }
+
+  Future<SliderModel?> getSliders() async {
+    http.Response response = await auth.getRequest(url: baseUrl + "SliderMain");
+    if (response.statusCode == 200) {
+      return SliderModel.fromJson(json.decode(response.body));
+    }
+    return null;
+  }
+
+  Future<ServicesModel?> getServices() async {
+    http.Response response =
+        await auth.getRequest(url: baseUrl + "MainService");
+    if (response.statusCode == 200) {
+      return ServicesModel.fromJson(json.decode(response.body));
+    }
+    return null;
+  }
+
+  Future<ServiceSliderModel?> getServiceSliders() async {
+    http.Response response = await auth.getRequest(url: baseUrl + "slider");
+    if (response.statusCode == 200) {
+      return ServiceSliderModel.fromJson(json.decode(response.body));
+    }
+    return null;
+  }
+
+  Future<DateModel?> fetchInactiveAppoinmentDate() async {
+    http.Response response = await auth.getRequest(url: baseUrl + "Holidays");
+    if (response.statusCode == 200) {
+      return DateModel.fromJson(json.decode(response.body));
+    }
+    return null;
+  }
+
+  Future<TimeSlotModel?> fetchTimeSlots() async {
+    http.Response response = await auth.getRequest(url: baseUrl + "Appointment/timeslotForDoctor");
+    if (response.statusCode == 200) {
+      return TimeSlotModel.fromJson(json.decode(response.body));
+    }
+    return null;
+  }
+
+  Future<MyAppoinmentModel?> fetchUpcoming() async {
+    http.Response response =
+        await auth.getAuthRequest(url: baseUrl + "Notification/upcoming");
+    if (response.statusCode == 200) {
+      return MyAppoinmentModel.fromJson(json.decode(response.body));
+    }
+    return null;
+  }
+
+  Future<MyAppoinmentModel?> fetchPast() async {
+    http.Response response =
+    await auth.getAuthRequest(url: baseUrl + "Notification/past");
+    if (response.statusCode == 200) {
+      return MyAppoinmentModel.fromJson(json.decode(response.body));
+    }
+    return null;
+  }
+
+  validateLogin({mobile}) async {
+    var data = {"mobile": mobile};
+    http.Response response =
+        await auth.postRequest(url: baseUrl + "Getotp", data: data);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    }
+    return null;
+  }
+
+  validateRegister({data}) async {
+    http.Response response = await auth.postRequest(
+        url: baseUrl + "authentication/registration", data: data);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    }
+    return null;
+  }
+
+  validateOtp({mobile, otp}) async {
+    var data = {"mobile": mobile, "otp": otp};
+    http.Response response =
+        await auth.postAuthRequest(url: baseUrl + "Login", data: data);
+    debugPrint("Status Code: ${response.statusCode}");
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    }
+    return null;
+  }
+
+  rescheduleAppointment({data}) async {
+    http.Response response = await auth.postAuthRequest(
+        url: baseUrl + "Appointment/update", data: data);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    }
+    return null;
+  }
+
+  cancelAppointment({id}) async {
+    http.Response response = await auth.getAuthRequest(
+        url: baseUrl + "Appointment/cancel/"+id);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    }
+    return null;
+  }
+
+  confirmAppointment({data}) async {
+    http.Response response = await auth.postAuthRequest(
+        url: baseUrl + "ConfirmAppointment", data: data);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    }
+    return null;
+  }
+}
