@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/models/date_timeslot.dart';
-import 'package:orchid/views/my_appoinments.dart';
+import 'package:orchid/views/my_appointments.dart';
 
 import '../views/doctor_appointment.dart';
 
@@ -74,7 +74,7 @@ class _TimeSlotTabState extends State<TimeSlotTab>
                           onTap: () {
                             setState(() {
                               selectedTime =  widget.time.am!.elementAt(index);
-                              Appointment.of(context)?.selectedTime = selectedTime;
+                              DoctorAppointment.of(context)?.selectedTime = selectedTime;
                             });
                           },
                           child: Container(
@@ -113,7 +113,7 @@ class _TimeSlotTabState extends State<TimeSlotTab>
                           onTap: () {
                             setState(() {
                               selectedTime = widget.time.pm!.elementAt(index);
-                              Appointment.of(context)?.selectedTime = selectedTime;
+                              DoctorAppointment.of(context)?.selectedTime = selectedTime;
                             });
                           },
                           child: Container(

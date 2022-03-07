@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/views/edit_profile.dart';
 import 'package:orchid/views/home_screen.dart';
+import 'package:orchid/views/my_appointments.dart';
 import 'package:orchid/views/notification_page.dart';
+
+import '../util/shared_preferences_helper.dart';
+import '../views/landing_page.dart';
+import '../views/profile.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({Key? key}) : super(key: key);
@@ -15,8 +21,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   final _pageOptions = [
     HomeScreen(),
-    const EditProfile(),
-    const NotificationPage(),
+    const Profile(),
+    MyAppointments(),
   ];
 
   @override
@@ -25,42 +31,34 @@ class _BottomNavBarState extends State<BottomNavBar> {
       backgroundColor: Colors.white,
       body: _pageOptions[selectedPage],
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: const Color(0xff4d0000),
+        selectedItemColor: primaryColor,
         elevation: 3.0,
         currentIndex: selectedPage,
         items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
           BottomNavigationBarItem(
-            activeIcon: Icon(
-              Icons.home,
-              color: Colors.pink,
-            ),
-            icon: Icon(Icons.home, color: Colors.black38),
-            label: '',
-          ),
+              icon: Icon(
+                Icons.person,
+              ),
+              label: ''),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person_outline,
-              color: Colors.black38,
-            ),
-            activeIcon: Icon(
-              Icons.person_outline,
-              color: Color(0xff4d0000),
-            ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notification_add_rounded, color: Colors.black38),
-            activeIcon: Icon(
-              Icons.notification_add_rounded,
-              color: Color(0xff4d0000),
-            ),
-            label: '',
-          ),
+              icon: Icon(Icons.notification_add_rounded), label: ''),
         ],
-        onTap: (index) {
-          setState(() {
-            selectedPage = index;
-          });
+        onTap: (index) async {
+          if (index == 1 || index == 2) {
+            if (await SharedPreferencesHelper.getAccessToken() == '') {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => LandingPage()));
+            } else {
+              setState(() {
+                selectedPage = index;
+              });
+            }
+          } else {
+            setState(() {
+              selectedPage = index;
+            });
+          }
         },
       ),
     );

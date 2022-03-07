@@ -18,7 +18,7 @@ class Network {
   Map<String, String>? _setAuthHeaders() => {
         'Content-type': 'application/json',
         'Accept': 'application/json',
-        // 'Authorization': 'Bearer $accessToken'
+        'Authorization': '$accessToken'
       };
 
   Map<String, String>? _setHeaders() => {
@@ -32,7 +32,7 @@ class Network {
   }
   getAuthRequest({url}) async {
     var fullUrl = Uri.parse(url);
-    // await _getToken();
+    await _getToken();
     return await http.get(fullUrl, headers: _setAuthHeaders());
   }
 
@@ -44,7 +44,7 @@ class Network {
 
   postAuthRequest({url, data}) async {
     var fullUrl = Uri.parse(url);
-    // await _getToken();
+    await _getToken();
     return await http.post(fullUrl,
         headers: _setAuthHeaders(), body: jsonEncode(data));
   }

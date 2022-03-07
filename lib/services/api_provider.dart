@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:orchid/models/date_timeslot.dart';
 import 'package:orchid/models/doctor.dart';
-import 'package:orchid/models/my_appoinment.dart';
+import 'package:orchid/models/my_appointment.dart';
 import 'package:orchid/models/nurse.dart';
 import 'package:orchid/models/service_slider.dart';
 import 'package:orchid/models/services.dart';
@@ -83,20 +83,20 @@ class ApiProvider {
     return null;
   }
 
-  Future<MyAppoinmentModel?> fetchUpcoming() async {
+  Future<MyAppoinmentUpcomingModel?> fetchUpcoming() async {
     http.Response response =
         await auth.getAuthRequest(url: baseUrl + "Notification/upcoming");
     if (response.statusCode == 200) {
-      return MyAppoinmentModel.fromJson(json.decode(response.body));
+      return MyAppoinmentUpcomingModel.fromJson(json.decode(response.body));
     }
     return null;
   }
 
-  Future<MyAppoinmentModel?> fetchPast() async {
+  Future<MyAppoinmentPastModel?> fetchPast() async {
     http.Response response =
     await auth.getAuthRequest(url: baseUrl + "Notification/past");
     if (response.statusCode == 200) {
-      return MyAppoinmentModel.fromJson(json.decode(response.body));
+      return MyAppoinmentPastModel.fromJson(json.decode(response.body));
     }
     return null;
   }
@@ -124,12 +124,21 @@ class ApiProvider {
     var data = {"mobile": mobile, "otp": otp};
     http.Response response =
         await auth.postAuthRequest(url: baseUrl + "Login", data: data);
-    debugPrint("Status Code: ${response.statusCode}");
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
     return null;
   }
+
+  logout() async {
+    http.Response response =
+    await auth.getRequest(url: baseUrl + "logout");
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    }
+    return null;
+  }
+
 
   rescheduleAppointment({data}) async {
     http.Response response = await auth.postAuthRequest(

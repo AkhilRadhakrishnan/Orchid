@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/helpers/theme.dart';
+import 'package:orchid/models/my_appointment.dart';
 import 'package:orchid/provider/my_appoinment_provider.dart';
 import 'package:orchid/widgets/my_appoinment_card.dart';
 import 'package:provider/provider.dart';
 
-class MyAppoinment extends StatefulWidget {
-  MyAppoinment({Key? key}) : super(key: key);
+class MyAppointments extends StatefulWidget {
+  MyAppointments({Key? key}) : super(key: key);
 
   @override
-  State<MyAppoinment> createState() => _MyAppoinmentState();
+  State<MyAppointments> createState() => _MyAppointmentsState();
 }
 
-class _MyAppoinmentState extends State<MyAppoinment>
+class _MyAppointmentsState extends State<MyAppointments>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _activeTabIndex = 0;
@@ -21,7 +22,6 @@ class _MyAppoinmentState extends State<MyAppoinment>
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: 2);
-    _tabController.addListener(_setActiveTabIndex);
     context.read<MyAppoinmentProvider>().fetchUpcoming();
   }
 
@@ -31,16 +31,17 @@ class _MyAppoinmentState extends State<MyAppoinment>
     super.dispose();
   }
 
-  void _setActiveTabIndex() {
-    _activeTabIndex = _tabController.index;
-  }
-
   @override
   Widget build(BuildContext context) {
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         setState(() {
           _activeTabIndex = _tabController.index;
+          if (_activeTabIndex == 0) {
+            context.read<MyAppoinmentProvider>().fetchUpcoming();
+          } else {
+            context.read<MyAppoinmentProvider>().fetchPast();
+          }
         });
       }
     });
@@ -65,11 +66,11 @@ class _MyAppoinmentState extends State<MyAppoinment>
           title: const Padding(
             padding: EdgeInsets.all(80.0),
             child: Text(
-              'My Appoinment',
+              'My Appointments',
             ),
           ),
         ),
-        body: Container(
+        body: SingleChildScrollView(
           padding: const EdgeInsets.all(15),
           child: Column(
             children: [
@@ -117,21 +118,27 @@ class _MyAppoinmentState extends State<MyAppoinment>
                 child: SizedBox(
                   child: Consumer<MyAppoinmentProvider>(
                       builder: (context, value, child) {
-                    if (value.upcoming?.upcoming == null) {
+                    if (_activeTabIndex == 0
+                        ? value.upcoming?.appointmentUpcoming == null
+                        : value.past?.appointmentPast == null) {
                       return const Center(child: CircularProgressIndicator());
                     }
                     return ListView.separated(
                       separatorBuilder: (BuildContext context, int index) {
                         return const SizedBox(height: 15);
                       },
-                      itemCount: value.upcoming!.upcoming!.length,
+                      itemCount: _activeTabIndex == 0
+                          ? value.upcoming!.appointmentUpcoming!.length
+                          : value.past!.appointmentPast!.length,
                       physics: const ScrollPhysics(),
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
-                        var upcoming =
-                            value.upcoming?.upcoming?.elementAt(index);
+                        Appointment? appointment = _activeTabIndex == 0
+                            ? value.upcoming?.appointmentUpcoming
+                                ?.elementAt(index)
+                            : value.past?.appointmentPast?.elementAt(index);
                         return MyAppoinmentCard(
-                            index: _activeTabIndex, upcoming: upcoming);
+                            index: _activeTabIndex, appointment: appointment!);
                       },
                     );
                   }),

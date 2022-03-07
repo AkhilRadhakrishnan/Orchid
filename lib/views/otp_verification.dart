@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/helpers/theme.dart';
+import 'package:orchid/models/login_otp.dart';
 import 'package:orchid/services/repository.dart';
 import 'package:orchid/util/shared_preferences_helper.dart';
 import 'package:orchid/widgets/bottom_nav.dart';
@@ -155,9 +156,10 @@ class _OtpVerificationState extends State<OtpVerification> {
 
   validateOtp() async {
     final res = await Repository()
-        .validateOtp(mobile: widget.mobile, otp: _otp); // API Call
+        .validateOtp(mobile: widget.mobile, otp: _otp);
     if (res["status"]) {
       SharedPreferencesHelper.saveAccessToken(res["access_token"]);
+      SharedPreferencesHelper.saveUserDetails(User.fromJson(res["user"]));
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const BottomNavBar()));
     } else {

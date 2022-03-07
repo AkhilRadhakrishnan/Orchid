@@ -57,7 +57,7 @@ class DoctorList extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Appointment(doctor: doctor)),
+                            builder: (context) => DoctorAppointment(doctor: doctor!)),
                       );
                     });
               });

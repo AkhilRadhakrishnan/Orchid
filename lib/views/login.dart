@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/helpers/theme.dart';
 import 'package:orchid/services/repository.dart';
-import 'package:orchid/util/shared_preferences_helper.dart';
-import 'package:orchid/views/forgot_password.dart';
-import 'package:orchid/widgets/bottom_nav.dart';
 
 import 'otp_verification.dart';
 

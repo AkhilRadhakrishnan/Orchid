@@ -8,15 +8,14 @@ import 'package:orchid/provider/doctor_nurse_provider.dart';
 import 'package:orchid/provider/my_appoinment_provider.dart';
 import 'package:orchid/provider/slider_provider.dart';
 import 'package:orchid/provider/specialities_provider.dart';
-import 'package:orchid/views/landing_page.dart';
-import 'package:orchid/views/profile.dart';
-import 'package:orchid/widgets/bottom_nav.dart';
+import 'package:orchid/views/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'models/doctor.dart';
 import 'models/services.dart';
 import 'models/slider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -28,7 +27,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   @override
   Widget build(BuildContext context) {
@@ -79,7 +77,8 @@ class _MyAppState extends State<MyApp> {
           ),
           title: 'Doctor Consultant',
           debugShowCheckedModeBanner: false,
-          home:  const BottomNavBar(),
+          home: SplashScreen(),
+          // BottomNavBar(),
         );
       },
     );

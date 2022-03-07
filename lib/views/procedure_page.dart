@@ -9,7 +9,7 @@ import 'package:orchid/models/services.dart';
 import 'package:orchid/provider/date_time_provider.dart';
 import 'package:orchid/provider/doctor_nurse_provider.dart';
 import 'package:orchid/util/formats.dart';
-import 'package:orchid/views/my_appoinments.dart';
+import 'package:orchid/views/my_appointments.dart';
 import 'package:orchid/widgets/service_card.dart';
 import 'package:provider/provider.dart';
 
@@ -46,15 +46,36 @@ class _ProcedurePageState extends State<ProcedurePage> {
       "11:45 am"
     ],
     "pm": [
-      "12:00 pm",
-      "12:15 pm",
-      "12:30 pm",
-      "12:45 pm",
-      "01:00 pm",
-      "01:15 pm",
-      "01:30 pm",
-      "01:45 pm",
-      "02:00 pm"
+      "05:00 pm",
+      "05:15 pm",
+      "05:30 pm",
+      "05:45 pm",
+      "06:00 pm",
+      "06:15 pm",
+      "06:30 pm",
+      "06:45 pm",
+      "07:00 pm",
+      "07:15 pm",
+      "07:30 pm",
+      "07:45 pm",
+      "08:00 pm",
+      "08:15 pm",
+      "08:30 pm",
+      "08:45 pm",
+      "09:00 pm",
+      "09:15 pm",
+      "09:30 pm",
+      "09:45 pm",
+      "10:00 pm",
+      "10:15 pm",
+      "10:30 pm",
+      "10:45 pm",
+      "11:00 pm",
+      "11:15 pm",
+      "11:30 pm",
+      "11:45 pm",
+
+
     ]
   };
   var timeSlotModel;
@@ -195,7 +216,7 @@ class _ProcedurePageState extends State<ProcedurePage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MyAppoinment(),
+                        builder: (context) => MyAppointments(),
                       ));
                 },
               ),

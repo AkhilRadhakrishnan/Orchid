@@ -2,19 +2,22 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/helpers/theme.dart';
+import 'package:orchid/models/login_otp.dart';
 import 'package:orchid/provider/doctor_nurse_provider.dart';
 import 'package:orchid/provider/slider_provider.dart';
 import 'package:orchid/provider/specialities_provider.dart';
+import 'package:orchid/util/shared_preferences_helper.dart';
 import 'package:orchid/views/doctor_appointment.dart';
-import 'package:orchid/views/edit_profile.dart';
 import 'package:orchid/widgets/doctor_card.dart';
 import 'package:orchid/widgets/doctor_list.dart';
 import 'package:orchid/views/services_page.dart';
 import 'package:orchid/widgets/specialities_card.dart';
 import 'package:provider/provider.dart';
-import 'notification_page.dart';
+
+import 'landing_page.dart';
 
 class HomeScreen extends StatefulWidget {
+  static const routeName = '/auth';
   HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -33,13 +36,25 @@ class _HomeScreenState extends State<HomeScreen> {
     'assets/images/facetreatment.jpg',
     'assets/images/hair-loss-treatment-clinic-1.png'
   ];
+  User userDetails = User();
+  String? accessToken = "";
 
   @override
   void initState() {
     super.initState();
+    getUserDetails();
     context.read<DoctorProvider>().fetchDoctors();
     context.read<SpecialitiesProvider>().fetchSpecialities();
     context.read<SliderProvider>().fetchSliders();
+  }
+
+  getUserDetails() async {
+    User user = await SharedPreferencesHelper.getUserDetails();
+    String? at = await SharedPreferencesHelper.getAccessToken();
+    setState(() {
+      userDetails = user;
+      accessToken = at;
+    });
   }
 
   @override
@@ -51,41 +66,56 @@ class _HomeScreenState extends State<HomeScreen> {
         preferredSize: const Size.fromHeight(60.0),
         child: Padding(
           padding: const EdgeInsets.only(top: 20.0),
-          child: ListTile(
-            leading: Container(
-              width: 40.0,
-              height: 40.0,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/user.png'),
-                  fit: BoxFit.cover,
+          child: InkWell(
+            child: ListTile(
+              leading: Container(
+                width: 40.0,
+                height: 40.0,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image:
+                        (userDetails.image == null || userDetails.image == '')
+                            ? AssetImage('assets/images/user.png')
+                            : NetworkImage(userDetails.image!) as ImageProvider,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
-            title: Text(
-              "Jane Doe",
-              style: theme.textTheme.headline6,
-            ),
-            subtitle: const Text(
-              "Find your suitable Doctor Here",
-            ),
-            trailing: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                color: backgroundColor,
+              title: Text(
+                (accessToken == "" || accessToken == null)
+                    ? 'Please Login'
+                    : ((userDetails.fileNo == "" || userDetails.fileNo == null)
+                        ? 'Enter your name'
+                        : userDetails.fileNo!),
+                style: theme.textTheme.headline6,
               ),
-              child: IconButton(
-                icon: const Icon(
-                  Icons.notification_add_rounded,
-                  size: 25.0,
-                ),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => EditProfile()));
-                  // const NotificationPage()));
-                },
+              subtitle: const Text(
+                "Find your suitable Doctor Here",
               ),
+              // trailing: Container(
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(10.0),
+              //     color: backgroundColor,
+              //   ),
+              //   child: IconButton(
+              //     icon: const Icon(
+              //       Icons.notification_add_rounded,
+              //       size: 25.0,
+              //     ),
+              //     onPressed: () {
+              //       Navigator.push(context,
+              //           MaterialPageRoute(builder: (context) => EditProfile()));
+              //       // const NotificationPage()));
+              //     },
+              //   ),
+              // ),
             ),
+            onTap: () {
+              if (accessToken == "" || accessToken == null) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LandingPage()));
+              }
+            },
           ),
         ),
       ),
@@ -96,7 +126,10 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             Consumer<SliderProvider>(builder: (context, value, child) {
               if (value.sliders?.sliders == null) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: primaryColor,
+                ));
               }
               return Column(children: [
                 Container(
@@ -216,7 +249,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             SizedBox(
               width: double.infinity,
               height: 200.0,
@@ -241,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    Appointment(doctor: doctor)),
+                                    DoctorAppointment(doctor: doctor!)),
                           );
                         });
                   },

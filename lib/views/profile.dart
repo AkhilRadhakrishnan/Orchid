@@ -3,12 +3,9 @@ import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/helpers/theme.dart';
 import 'package:orchid/services/repository.dart';
 import 'package:orchid/util/shared_preferences_helper.dart';
-import 'package:orchid/views/forgot_password.dart';
-import 'package:orchid/views/my_appoinments.dart';
+import 'package:orchid/views/my_appointments.dart';
 import 'package:orchid/views/notification_page.dart';
-import 'package:orchid/widgets/bottom_nav.dart';
-
-import 'otp_verification.dart';
+import 'package:orchid/views/splash_screen.dart';
 
 class Profile extends StatefulWidget {
   const Profile({
@@ -24,7 +21,13 @@ class _ProfileState extends State<Profile> {
   TextEditingController mail = TextEditingController();
   TextEditingController mobile = TextEditingController();
   final dateController = TextEditingController();
-  String dropdownvalue = 'Male';
+  String dropdownValue = 'Male';
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   void dispose() {
     // Clean up the controller when the widget is removed
@@ -100,7 +103,7 @@ class _ProfileState extends State<Profile> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MyAppoinment()),
+                  MaterialPageRoute(builder: (context) => MyAppointments()),
                 );
               },
             ),
@@ -148,7 +151,13 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  void onLogout() {
-    // logout api
+  void onLogout() async {
+    var res = await Repository().logout();
+    if (res['status']) {
+      SharedPreferencesHelper.saveUserDetails(null);
+      SharedPreferencesHelper.saveAccessToken('');
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SplashScreen()));
+    }
   }
 }

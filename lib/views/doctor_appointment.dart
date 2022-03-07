@@ -8,31 +8,33 @@ import 'package:orchid/provider/date_time_provider.dart';
 import 'package:orchid/util/formats.dart';
 import 'package:orchid/util/shared_preferences_helper.dart';
 import 'package:orchid/views/landing_page.dart';
-import 'package:orchid/views/my_appoinments.dart';
+import 'package:orchid/views/my_appointments.dart';
 import 'package:provider/provider.dart';
 
 import '../services/repository.dart';
 import '../widgets/appointment_time_tab.dart';
 import '../widgets/expandable_text.dart';
 import 'login.dart';
+import 'package:intl/intl.dart';
 
-class Appointment extends StatefulWidget {
-  Doctor? doctor;
-  Appointment({Key? key, this.doctor}) : super(key: key);
+class DoctorAppointment extends StatefulWidget {
+  Doctor doctor;
+  DoctorAppointment({Key? key, required this.doctor}) : super(key: key);
 
   @override
-  State<Appointment> createState() => _AppointmentState();
-  static _AppointmentState? of(BuildContext context) =>
-      context.findAncestorStateOfType<_AppointmentState>();
+  State<DoctorAppointment> createState() => _DoctorAppointmentState();
+  static _DoctorAppointmentState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_DoctorAppointmentState>();
 }
 
-class _AppointmentState extends State<Appointment> {
+class _DoctorAppointmentState extends State<DoctorAppointment> {
   String _selectedTime = "";
 
   set selectedTime(String value) => setState(() => _selectedTime = value);
 
   final DatePickerController _dateController = DatePickerController();
   String _selectedDate = formatDate(DateTime.now()).text;
+  DateTime _apiDate = DateTime.now();
   String descText =
       'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry'
       'standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.'
@@ -43,7 +45,7 @@ class _AppointmentState extends State<Appointment> {
 
   @override
   void initState() {
-    super.initState();
+    super.initState();// need to be removed
     context.read<AppoinmentProvider>().fetchInactiveAppoinmentDate();
     context.read<AppoinmentProvider>().fetchTimeSlots();
   }
@@ -100,7 +102,7 @@ class _AppointmentState extends State<Appointment> {
                       Positioned(
                         bottom: 0,
                         child: Image.network(
-                          widget.doctor!.image!,
+                          widget.doctor.image!,
                           height: 130,
                           width: 140,
                           fit: BoxFit.fill,
@@ -115,11 +117,11 @@ class _AppointmentState extends State<Appointment> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.doctor!.name.toString(),
+                        widget.doctor.name!,
                         style: theme.textTheme.headline6,
                       ),
                       Text(
-                        widget.doctor!.speciality.toString(),
+                        widget.doctor.speciality!,
                         style: theme.textTheme.subtitle1,
                       ),
                     ],
@@ -162,6 +164,7 @@ class _AppointmentState extends State<Appointment> {
                   // New date selected
                   setState(() {
                     _selectedDate = formatDate(date).text;
+                    _apiDate = date;
                   });
                 },
               );
@@ -182,24 +185,25 @@ class _AppointmentState extends State<Appointment> {
               height: 10,
             ),
             ElevatedButton(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text("Confirm Appointment"),
-                ],
-              ),
-              style: ElevatedButton.styleFrom(
-                onPrimary: Colors.white,
-                primary: primaryColor,
-                elevation: 0,
-                minimumSize: const Size(150, 50),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
-              ),
-              onPressed: () {
-                takeAppoinment();
-              },
-            ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text("Confirm Appointment"),
+                  ],
+                ),
+                style: ElevatedButton.styleFrom(
+                  onPrimary: Colors.white,
+                  primary: primaryColor,
+                  elevation: 0,
+                  minimumSize: const Size(150, 50),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30)),
+                ),
+                onPressed: (_selectedTime == "")
+                    ? null
+                    : () async {
+                        await takeAppoinment();
+                      })
           ],
         ),
       ),
@@ -219,14 +223,20 @@ class _AppointmentState extends State<Appointment> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => LandingPage()));
     } else {
+      var cDate = DateFormat('yyyy-MM-dd').format(_apiDate);
       var data = {
-        "appointment_date": _selectedDate,
+        "appointment_date": cDate,
         "app_time": _selectedTime,
-        "docter_id": widget.doctor!.id,
+        "docter_id": widget.doctor.id,
       };
-      await Repository().confirmAppointment(data: data);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MyAppoinment()));
+
+      dynamic res = await Repository().confirmAppointment(data: data);
+      if (res["status"]) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => MyAppointments()));
+      } else {
+        return "User not exist";
+      }
     }
     // Navigator.push(
     //     context, MaterialPageRoute(builder: (context) => LandingPage()));

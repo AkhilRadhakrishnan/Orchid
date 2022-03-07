@@ -1,6 +1,6 @@
 import 'package:orchid/models/date_timeslot.dart';
 import 'package:orchid/models/doctor.dart';
-import 'package:orchid/models/my_appoinment.dart';
+import 'package:orchid/models/my_appointment.dart';
 import 'package:orchid/models/nurse.dart';
 import 'package:orchid/models/service_slider.dart';
 import 'package:orchid/models/services.dart';
@@ -43,11 +43,11 @@ class Repository {
     return await _apiProvider.fetchTimeSlots();
   }
 
-  Future<MyAppoinmentModel?> fetchUpcoming() async {
+  Future<MyAppoinmentUpcomingModel?> fetchUpcoming() async {
     return await _apiProvider.fetchUpcoming();
   }
 
-  Future<MyAppoinmentModel?> fetchPast() async {
+  Future<MyAppoinmentPastModel?> fetchPast() async {
     return await _apiProvider.fetchPast();
   }
 
@@ -61,6 +61,10 @@ class Repository {
 
   validateOtp({mobile, otp}) async {
     return await _apiProvider.validateOtp(mobile: mobile, otp: otp);
+  }
+
+  logout() async {
+    return await _apiProvider.logout();
   }
 
   rescheduleAppointment({data}) async {

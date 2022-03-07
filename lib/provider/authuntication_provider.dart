@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:orchid/services/repository.dart';
 
-class LoginProvider with ChangeNotifier {
+class AuthenticationProvider with ChangeNotifier {
   final _repository = Repository();
 
-  LoginProvider? _login;
-  LoginProvider? get login => _login;
+  AuthenticationProvider? _login;
+  AuthenticationProvider? get login => _login;
 
-  set login(LoginProvider? login) {
+  set login(AuthenticationProvider? login) {
     _login = login;
     notifyListeners();
   }
@@ -19,6 +19,11 @@ class LoginProvider with ChangeNotifier {
 
   Future<void> validateOtp() async {
     login = await _repository.validateOtp();
+    notifyListeners();
+  }
+
+  Future<void> logout() async {
+    login = await _repository.logout();
     notifyListeners();
   }
 }
