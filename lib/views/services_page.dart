@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/provider/slider_provider.dart';
 import 'package:orchid/provider/specialities_provider.dart';
-import 'package:orchid/views/procedure_page.dart';
+import 'package:orchid/views/service_booking_page.dart';
 import 'package:orchid/widgets/service_card.dart';
 import 'package:orchid/widgets/specialities_card.dart';
 import 'package:provider/provider.dart';

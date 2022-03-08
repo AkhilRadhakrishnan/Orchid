@@ -2,7 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/helpers/theme.dart';
-import 'package:orchid/models/login_otp.dart';
+import 'package:orchid/models/authentication.dart';
 import 'package:orchid/provider/doctor_nurse_provider.dart';
 import 'package:orchid/provider/slider_provider.dart';
 import 'package:orchid/provider/specialities_provider.dart';
@@ -14,6 +14,7 @@ import 'package:orchid/views/services_page.dart';
 import 'package:orchid/widgets/specialities_card.dart';
 import 'package:provider/provider.dart';
 
+import 'edit_profile.dart';
 import 'landing_page.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -84,9 +85,9 @@ class _HomeScreenState extends State<HomeScreen> {
               title: Text(
                 (accessToken == "" || accessToken == null)
                     ? 'Please Login'
-                    : ((userDetails.fileNo == "" || userDetails.fileNo == null)
+                    : ((userDetails.name == "" || userDetails.name == null)
                         ? 'Enter your name'
-                        : userDetails.fileNo!),
+                        : userDetails.name!),
                 style: theme.textTheme.headline6,
               ),
               subtitle: const Text(
@@ -114,7 +115,9 @@ class _HomeScreenState extends State<HomeScreen> {
               if (accessToken == "" || accessToken == null) {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => LandingPage()));
-              }
+              }else
+              {Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => EditProfile()));}
             },
           ),
         ),

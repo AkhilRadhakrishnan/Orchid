@@ -78,4 +78,11 @@ class Repository {
   confirmAppointment({data}) async {
     return await _apiProvider.confirmAppointment(data: data);
   }
+  editUser({data}) async {
+    return await _apiProvider.editUser(data: data);
+  }
+
+  enquiryAppointment({data}) async {
+    return await _apiProvider.enquiryAppointment(data: data);
+  }
 }

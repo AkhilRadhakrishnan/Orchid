@@ -43,4 +43,16 @@ class Doctor {
         speciality: json["speciality"],
         description: json["description"],
       );
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'image': image,
+      'experiance': experience,
+      'patients': patients,
+      'speciality': speciality,
+      'description': description
+    };
+  }
 }

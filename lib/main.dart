@@ -78,7 +78,6 @@ class _MyAppState extends State<MyApp> {
           title: 'Doctor Consultant',
           debugShowCheckedModeBanner: false,
           home: SplashScreen(),
-          // BottomNavBar(),
         );
       },
     );

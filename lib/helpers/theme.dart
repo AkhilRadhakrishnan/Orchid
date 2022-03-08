@@ -23,6 +23,10 @@ InputDecoration inputTextDecoration = InputDecoration(
     borderSide: BorderSide(color: bodyTextColor),
     borderRadius: BorderRadius.circular(10),
   ),
+  disabledBorder:OutlineInputBorder(
+    borderSide: BorderSide(color: bodyTextColor),
+    borderRadius: BorderRadius.circular(10),
+  ),
   focusedBorder: OutlineInputBorder(
     borderSide: BorderSide(width: 1, color: borderSide),
     borderRadius: BorderRadius.circular(10),

@@ -17,29 +17,33 @@ class LoginModel {
 }
 
 class User {
-  User({
-    this.id,
-    this.fileNo,
-    this.email,
-    this.name,
-    this.contactNo,
-    this.image,
-  });
+  User(
+      {this.id,
+      this.fileNo,
+      this.email,
+      this.name,
+      this.contactNo,
+      this.image,
+      this.gender,
+      this.dob});
   String? id;
   String? fileNo;
   String? name;
   String? email;
   String? image;
   String? contactNo;
+  String? gender;
+  String? dob;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-        id: json["custid"],
-        fileNo: json["file_no"],
-        email: json["email"],
-        name: json["cust_name"],
-        contactNo: json["contact_no"],
-        image: json["image"],
-      );
+      id: json["custid"],
+      fileNo: json["file_no"],
+      email: json["email"],
+      name: json["cust_name"],
+      contactNo: json["contact_no"],
+      image: json["image"],
+      gender: json["gender"],
+      dob: json["dob"]);
 
   Map<String, dynamic> toJson() {
     return {
@@ -48,7 +52,9 @@ class User {
       'email': email,
       'cust_name': name,
       'contact_no': contactNo,
-      'image': image
+      'image': image,
+      'gender': gender,
+      'dob': dob
     };
   }
 }

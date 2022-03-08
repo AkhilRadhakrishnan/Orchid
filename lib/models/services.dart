@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:orchid/helpers/colors.dart';
 
 class ServicesModel with ChangeNotifier {
   ServicesModel({
@@ -36,9 +35,19 @@ class Services {
         id: json["id"],
         image: json["image"],
         text: json["text"],
-    title: json["titile"],
-    icon: json["icon"],
+        title: json["titile"],
+        icon: json["icon"],
       );
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'image': image,
+      'text': text,
+      'titile': title,
+      'icon': icon,
+    };
+  }
 }
 
 // List<Services> servicesList = [
@@ -67,36 +76,3 @@ class ServiceDetails {
       required this.color,
       required this.textColor});
 }
-
-List<ServiceDetails> servicesDetailList = [
-  ServiceDetails(
-      image: 'assets/images/hand.png',
-      name: "Urticanal\n Hives",
-      color: Colors.white,
-      textColor: bodyTextColor),
-  ServiceDetails(
-      image: 'assets/images/skin.png',
-      name: "Eczema",
-      color: Colors.white,
-      textColor: bodyTextColor),
-  ServiceDetails(
-      image: 'assets/images/anceicon.png',
-      name: "Vitiligo",
-      color: Colors.white,
-      textColor: bodyTextColor),
-  ServiceDetails(
-      image: 'assets/images/hand.png',
-      name: "Urticanal\n Hives",
-      color: Colors.white,
-      textColor: bodyTextColor),
-  ServiceDetails(
-      image: 'assets/images/skin.png',
-      name: "Eczema",
-      color: Colors.white,
-      textColor: bodyTextColor),
-  ServiceDetails(
-      image: 'assets/images/anceicon.png',
-      name: "Vitiligo",
-      color: Colors.white,
-      textColor: bodyTextColor)
-];

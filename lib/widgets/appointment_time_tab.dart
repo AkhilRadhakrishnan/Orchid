@@ -8,8 +8,10 @@ import '../views/doctor_appointment.dart';
 typedef void StringCallback(String val);
 
 class TimeSlotTab extends StatefulWidget {
-  final TimeSlotModel time;
-  TimeSlotTab({Key? key, required this.time}) : super(key: key);
+  final TimeSlotModel timeSlots;
+  String? selectedTime;
+  TimeSlotTab({Key? key, required this.timeSlots, this.selectedTime})
+      : super(key: key);
   @override
   _TimeSlotTabState createState() => _TimeSlotTabState();
 
@@ -30,6 +32,9 @@ class _TimeSlotTabState extends State<TimeSlotTab>
   @override
   void initState() {
     super.initState();
+    if (widget.selectedTime != null) {
+      selectedTime = widget.selectedTime!;
+    }
     _tabController = TabController(vsync: this, length: myTabs.length);
   }
 
@@ -64,7 +69,7 @@ class _TimeSlotTabState extends State<TimeSlotTab>
                 children: [
                   GridView.builder(
                       // itemCount: morningSlots.length,
-                      itemCount: widget.time.am?.length,
+                      itemCount: widget.timeSlots.am?.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3, childAspectRatio: 1.8),
@@ -73,8 +78,10 @@ class _TimeSlotTabState extends State<TimeSlotTab>
                         return InkWell(
                           onTap: () {
                             setState(() {
-                              selectedTime =  widget.time.am!.elementAt(index);
-                              DoctorAppointment.of(context)?.selectedTime = selectedTime;
+                              selectedTime =
+                                  widget.timeSlots.am!.elementAt(index);
+                              DoctorAppointment.of(context)?.selectedTime =
+                                  selectedTime;
                             });
                           },
                           child: Container(
@@ -82,7 +89,8 @@ class _TimeSlotTabState extends State<TimeSlotTab>
                                 top: 10, right: 10, bottom: 10),
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: selectedTime ==  widget.time.am!.elementAt(index)
+                              color: selectedTime ==
+                                      widget.timeSlots.am!.elementAt(index)
                                   ? primaryColor
                                   : Colors.white,
                               borderRadius: const BorderRadius.all(
@@ -91,9 +99,10 @@ class _TimeSlotTabState extends State<TimeSlotTab>
                             ),
                             child: Center(
                               child: Text(
-                                widget.time.am!.elementAt(index),
+                                widget.timeSlots.am!.elementAt(index),
                                 style: TextStyle(
-                                  color: selectedTime == widget.time.am!.elementAt(index)
+                                  color: selectedTime ==
+                                          widget.timeSlots.am!.elementAt(index)
                                       ? Colors.white
                                       : bodyTextColor,
                                 ),
@@ -103,7 +112,7 @@ class _TimeSlotTabState extends State<TimeSlotTab>
                         );
                       }),
                   GridView.builder(
-                      itemCount: widget.time.pm?.length,
+                      itemCount: widget.timeSlots.pm?.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3, childAspectRatio: 1.8),
@@ -112,8 +121,10 @@ class _TimeSlotTabState extends State<TimeSlotTab>
                         return InkWell(
                           onTap: () {
                             setState(() {
-                              selectedTime = widget.time.pm!.elementAt(index);
-                              DoctorAppointment.of(context)?.selectedTime = selectedTime;
+                              selectedTime =
+                                  widget.timeSlots.pm!.elementAt(index);
+                              DoctorAppointment.of(context)?.selectedTime =
+                                  selectedTime;
                             });
                           },
                           child: Container(
@@ -121,7 +132,8 @@ class _TimeSlotTabState extends State<TimeSlotTab>
                                 top: 10, right: 10, bottom: 10),
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color:  selectedTime == widget.time.pm!.elementAt(index)
+                              color: selectedTime ==
+                                      widget.timeSlots.pm!.elementAt(index)
                                   ? primaryColor
                                   : Colors.white,
                               borderRadius: const BorderRadius.all(
@@ -130,9 +142,10 @@ class _TimeSlotTabState extends State<TimeSlotTab>
                             ),
                             child: Center(
                               child: Text(
-                                widget.time.pm!.elementAt(index),
+                                widget.timeSlots.pm!.elementAt(index),
                                 style: TextStyle(
-                                  color: selectedTime == widget.time.pm!.elementAt(index)
+                                  color: selectedTime ==
+                                          widget.timeSlots.pm!.elementAt(index)
                                       ? Colors.white
                                       : bodyTextColor,
                                 ),

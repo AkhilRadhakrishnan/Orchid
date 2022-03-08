@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:orchid/helpers/colors.dart';
@@ -12,9 +11,12 @@ import 'package:orchid/util/formats.dart';
 import 'package:orchid/views/my_appointments.dart';
 import 'package:orchid/widgets/service_card.dart';
 import 'package:provider/provider.dart';
-
+import 'package:intl/src/intl/date_format.dart';
+import '../services/repository.dart';
+import '../util/shared_preferences_helper.dart';
 import '../widgets/appointment_time_tab.dart';
 import '../widgets/doctor_card.dart';
+import 'landing_page.dart';
 
 class ProcedurePage extends StatefulWidget {
   final Services service;
@@ -25,11 +27,14 @@ class ProcedurePage extends StatefulWidget {
 }
 
 class _ProcedurePageState extends State<ProcedurePage> {
-  int current = 0;
-  int? selectedIndex;
+  String _selectedTime = "";
+  set selectedTime(String value) => setState(() => _selectedTime = value);
+
   final DatePickerController _dateController = DatePickerController();
-  String _selectedDate = formatDate(DateTime.now()).text;
-  // TimeSlotModel timeSlots = TimeSlotModel();
+  String _selectedDateView = formatDate(DateTime.now()).text;
+  DateTime _selectedDateApi = DateTime.now();
+  int current = 0;
+  String? selectedNurse;
   final timeSlots = {
     "am": [
       "09:00 am",
@@ -74,8 +79,6 @@ class _ProcedurePageState extends State<ProcedurePage> {
       "11:15 pm",
       "11:30 pm",
       "11:45 pm",
-
-
     ]
   };
   var timeSlotModel;
@@ -129,7 +132,7 @@ class _ProcedurePageState extends State<ProcedurePage> {
               const SizedBox(
                 height: 20,
               ),
-              Text(_selectedDate.toString()),
+              Text(_selectedDateView.toString()),
               sizedBox,
               Consumer<AppoinmentProvider>(builder: (context, value, child) {
                 if (value.dateList == null) {
@@ -148,7 +151,7 @@ class _ProcedurePageState extends State<ProcedurePage> {
                   onDateChange: (date) {
                     // New date selected
                     setState(() {
-                      _selectedDate = formatDate(date).text;
+                      _selectedDateView = formatDate(date).text;
                     });
                   },
                 );
@@ -159,7 +162,7 @@ class _ProcedurePageState extends State<ProcedurePage> {
               SizedBox(
                   height: 185,
                   child: TimeSlotTab(
-                    time: timeSlotModel,
+                    timeSlots: timeSlotModel,
                   )),
               sizedBox,
               const Text('Choose Nurse'),
@@ -185,10 +188,10 @@ class _ProcedurePageState extends State<ProcedurePage> {
                           child: DoctorCard(
                               person: nurse,
                               noPatients: true,
-                              selected: selectedIndex == index),
+                              selected: selectedNurse == nurse?.id),
                           onTap: () {
                             setState(() {
-                              selectedIndex = index;
+                              selectedNurse = nurse?.id;
                             });
                           });
                     },
@@ -197,29 +200,24 @@ class _ProcedurePageState extends State<ProcedurePage> {
               ),
               sizedBox,
               ElevatedButton(
-                // child: Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: const [
-                //     Text("Confirm Appointment"),
-                //   ],
-                // ),
-                child: const Text("Confirm Appointment"),
-                style: ElevatedButton.styleFrom(
-                  onPrimary: Colors.white,
-                  primary: primaryColor,
-                  elevation: 0,
-                  fixedSize: Size(MediaQuery.of(context).size.width, 50),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MyAppointments(),
-                      ));
-                },
-              ),
+                  // child: Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: const [
+                  //     Text("Confirm Appointment"),
+                  //   ],
+                  // ),
+                  child: const Text("Confirm Appointment"),
+                  style: ElevatedButton.styleFrom(
+                    onPrimary: Colors.white,
+                    primary: primaryColor,
+                    elevation: 0,
+                    fixedSize: Size(MediaQuery.of(context).size.width, 50),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                  ),
+                  onPressed: () {
+                    takeEnquiry();
+                  }),
             ],
           ),
         ),
@@ -233,5 +231,37 @@ class _ProcedurePageState extends State<ProcedurePage> {
       holidayList.add(DateTime.parse(day.date!));
     });
     return holidayList;
+  }
+
+  takeEnquiry() async {
+    var cDate = DateFormat('yyyy-MM-dd').format(_selectedDateApi);
+    var data = {
+      "appointment_date": cDate,
+      "app_time": _selectedTime,
+      "nurse_id": selectedNurse,
+      "service_pid": widget.service.id,
+    };
+
+    if (await SharedPreferencesHelper.getAccessToken() == null) {
+      await SharedPreferencesHelper.saveServiceDetails(widget.service);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LandingPage()));
+    } else {
+      dynamic res = await Repository().enquiryAppointment(data: data);
+
+      if (res["status"]) {
+        final snackBar = SnackBar(
+          content: const Text('Hi, I am a SnackBar!'),
+          backgroundColor: (Colors.black12),
+          action: SnackBarAction(
+            label: 'dismiss',
+            onPressed: () {},
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        return "User not exist";
+      }
+    }
   }
 }

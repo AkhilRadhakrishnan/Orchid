@@ -7,10 +7,10 @@ import 'package:orchid/views/my_appointments.dart';
 import '../models/doctor.dart';
 import '../services/repository.dart';
 
-class MyAppoinmentCard extends StatelessWidget {
+class MyAppointmentCard extends StatelessWidget {
   int? index;
   Appointment appointment;
-  MyAppoinmentCard({Key? key, required this.index, required this.appointment})
+  MyAppointmentCard({Key? key, required this.index, required this.appointment})
       : super(key: key);
 
   @override
@@ -116,11 +116,12 @@ class MyAppoinmentCard extends StatelessWidget {
       var data = {
         'image': appointment.image,
         "name": appointment.doctor,
-        "speciality": appointment.speciality
+        "speciality": appointment.speciality,
+        "description" : appointment.description
       };
       Doctor doctor = Doctor.fromJson(data);
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => DoctorAppointment(doctor: doctor)));
+          builder: (context) => DoctorAppointment(doctor: doctor,appointmentStatus: "update",appointment: appointment)));
     }
   }
 }

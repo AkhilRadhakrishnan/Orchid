@@ -33,15 +33,15 @@ class MyAppoinmentPastModel with ChangeNotifier {
 }
 
 class Appointment {
-  Appointment({
-    this.id,
-    this.date,
-    this.time,
-    this.doctor,
-    this.type,
-    this.image,
-    this.speciality,
-  });
+  Appointment(
+      {this.id,
+      this.date,
+      this.time,
+      this.doctor,
+      this.type,
+      this.image,
+      this.speciality,
+      this.description});
 
   String? id;
   String? date;
@@ -50,14 +50,15 @@ class Appointment {
   String? type;
   String? image;
   String? speciality;
+  String? description;
 
   factory Appointment.fromJson(Map<String, dynamic> json) => Appointment(
-        id: json["app_id"],
-        date: json["appointment_date"],
-        time: json["app_time"],
-        doctor: json["name"],
-        type: json["designation"],
-        image: json["image"],
-        speciality: json["speciality"],
-      );
+      id: json["app_id"],
+      date: json["appointment_date"],
+      time: json["app_time"],
+      doctor: json["name"],
+      type: json["designation"],
+      image: json["image"],
+      speciality: json["speciality"],
+      description: json["description"]);
 }

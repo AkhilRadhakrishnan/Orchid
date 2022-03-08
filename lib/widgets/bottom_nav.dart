@@ -3,8 +3,6 @@ import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/views/edit_profile.dart';
 import 'package:orchid/views/home_screen.dart';
 import 'package:orchid/views/my_appointments.dart';
-import 'package:orchid/views/notification_page.dart';
-
 import '../util/shared_preferences_helper.dart';
 import '../views/landing_page.dart';
 import '../views/profile.dart';
@@ -46,7 +44,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
         ],
         onTap: (index) async {
           if (index == 1 || index == 2) {
-            if (await SharedPreferencesHelper.getAccessToken() == '') {
+            var u = await SharedPreferencesHelper.getAccessToken();
+            debugPrint(u);
+            if (await SharedPreferencesHelper.getAccessToken() == null) {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => LandingPage()));
             } else {

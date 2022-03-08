@@ -166,4 +166,20 @@ class ApiProvider {
     }
     return null;
   }
+  editUser({data}) async {
+    http.Response response = await auth.postAuthRequest(
+        url: baseUrl + "Profile/profile_post", data: data);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    }
+    return null;
+  }
+  enquiryAppointment({data}) async {
+    http.Response response = await auth.postAuthRequest(
+        url: baseUrl + "ConfirmAppointment/service", data: data);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    }
+    return null;
+  }
 }

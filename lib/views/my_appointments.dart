@@ -137,7 +137,7 @@ class _MyAppointmentsState extends State<MyAppointments>
                             ? value.upcoming?.appointmentUpcoming
                                 ?.elementAt(index)
                             : value.past?.appointmentPast?.elementAt(index);
-                        return MyAppoinmentCard(
+                        return MyAppointmentCard(
                             index: _activeTabIndex, appointment: appointment!);
                       },
                     );

@@ -3,9 +3,11 @@ import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/helpers/theme.dart';
 import 'package:orchid/services/repository.dart';
 import 'package:orchid/util/shared_preferences_helper.dart';
+import 'package:orchid/views/edit_profile.dart';
 import 'package:orchid/views/my_appointments.dart';
-import 'package:orchid/views/notification_page.dart';
 import 'package:orchid/views/splash_screen.dart';
+
+import '../models/authentication.dart';
 
 class Profile extends StatefulWidget {
   const Profile({
@@ -22,10 +24,22 @@ class _ProfileState extends State<Profile> {
   TextEditingController mobile = TextEditingController();
   final dateController = TextEditingController();
   String dropdownValue = 'Male';
+  User userDetails = User();
+  String? accessToken = "";
 
   @override
   void initState() {
+    getUserDetails();
     super.initState();
+  }
+
+  getUserDetails() async {
+    User user = await SharedPreferencesHelper.getUserDetails();
+    String? at = await SharedPreferencesHelper.getAccessToken();
+    setState(() {
+      userDetails = user;
+      accessToken = at;
+    });
   }
 
   @override
@@ -65,25 +79,63 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   sizedBox,
-                  const Text(
-                    "Akhil Radhakrishnan",
-                    style: TextStyle(fontSize: 16),
+                  Text(
+                    ((userDetails.name == "" || userDetails.name == null)
+                        ? ''
+                        : userDetails.name!),
+                    style: const TextStyle(fontSize: 16),
                   ),
-                  const Text(
-                    "akhiler@gmail.com",
-                    style: TextStyle(fontSize: 12),
+                  Text(
+                    ((userDetails.email == "" || userDetails.email == null)
+                        ? ''
+                        : userDetails.email!),
+                    style: const TextStyle(fontSize: 12),
                   ),
-                  const Text(
-                    "+974 52468 15545",
-                    style: TextStyle(fontSize: 12),
+                  Text(
+                    ((userDetails.contactNo == "" ||
+                            userDetails.contactNo == null)
+                        ? ''
+                        : userDetails.contactNo!),
+                    style: const TextStyle(fontSize: 12),
                   ),
                   sizedBox,
-                  const Text(
-                    "lorem ipsum sample document",
-                    style: TextStyle(fontSize: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('File No: '),
+                      Text(
+                        ((userDetails.fileNo == "" ||
+                                userDetails.fileNo == null)
+                            ? ''
+                            : userDetails.fileNo!),
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ],
                   ),
                 ],
               ),
+            ),
+            sizedBox,
+            InkWell(
+              child: Container(
+                width: MediaQuery.of(context).size.height,
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: const Text(
+                  "Edit Profile",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const EditProfile()),
+                );
+              },
             ),
             sizedBox,
             InkWell(
@@ -104,28 +156,6 @@ class _ProfileState extends State<Profile> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => MyAppointments()),
-                );
-              },
-            ),
-            sizedBox,
-            InkWell(
-              child: Container(
-                width: MediaQuery.of(context).size.height,
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: const Text(
-                  "My Notifications",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-                ),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const NotificationPage()),
                 );
               },
             ),
@@ -154,8 +184,7 @@ class _ProfileState extends State<Profile> {
   void onLogout() async {
     var res = await Repository().logout();
     if (res['status']) {
-      SharedPreferencesHelper.saveUserDetails(null);
-      SharedPreferencesHelper.saveAccessToken('');
+      SharedPreferencesHelper.clearAll();
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => SplashScreen()));
     }

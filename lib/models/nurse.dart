@@ -24,7 +24,7 @@ class Nurse {
     this.experience,
   });
 
-  int? id;
+  String? id;
   String? name;
   String? image;
   String? speciality;

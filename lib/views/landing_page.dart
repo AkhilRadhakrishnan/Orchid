@@ -71,7 +71,6 @@ class LandingPage extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                      // BottomNavBar()));
                                   LoginPage(loginView: true,)));
                     },
                     child: const Text("Login", style: TextStyle(fontSize: 18)),
