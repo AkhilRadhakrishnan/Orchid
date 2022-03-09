@@ -1,9 +1,8 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:orchid/models/my_appointment.dart';
 import 'package:orchid/services/repository.dart';
 
-class MyAppoinmentProvider with ChangeNotifier {
+class MyAppointmentProvider with ChangeNotifier {
   final _repository = Repository();
 
   MyAppoinmentUpcomingModel? _upcoming;
@@ -12,13 +11,12 @@ class MyAppoinmentProvider with ChangeNotifier {
   MyAppoinmentPastModel? _past;
   MyAppoinmentPastModel? get past => _past;
 
-
-  set upcoming(MyAppoinmentUpcomingModel?  MyAppoinmentModel) {
+  set upcoming(MyAppoinmentUpcomingModel? MyAppoinmentModel) {
     _upcoming = MyAppoinmentModel;
     notifyListeners();
   }
 
-  set past(MyAppoinmentPastModel?  MyAppoinmentModel) {
+  set past(MyAppoinmentPastModel? MyAppoinmentModel) {
     _past = MyAppoinmentModel;
     notifyListeners();
   }

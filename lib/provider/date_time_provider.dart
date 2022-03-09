@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:orchid/models/date_timeslot.dart';
 import 'package:orchid/services/repository.dart';
 
-class AppoinmentProvider with ChangeNotifier {
+class AppointmentProvider with ChangeNotifier {
   final _repository = Repository();
 
   DateModel? _dateList;
@@ -20,8 +20,8 @@ class AppoinmentProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchInactiveAppoinmentDate() async {
-    dateList = await _repository.fetchInactiveAppoinmentDate();
+  Future<void> fetchInactiveAppointmentDate() async {
+    dateList = await _repository.fetchInactiveAppointmentDate();
     notifyListeners();
   }
 

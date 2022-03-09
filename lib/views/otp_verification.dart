@@ -26,12 +26,10 @@ class _OtpVerificationState extends State<OtpVerification> {
   final TextEditingController _fieldTwo = TextEditingController();
   final TextEditingController _fieldThree = TextEditingController();
   final TextEditingController _fieldFour = TextEditingController();
-
-  // This is the entered code
-  // It will be displayed in a Text widget
   String? _otp;
   String _timerValue = "";
   late Timer _timer;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -91,15 +89,11 @@ class _OtpVerificationState extends State<OtpVerification> {
               height: 30,
             ),
             ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _otp = _fieldOne.text +
-                      _fieldTwo.text +
-                      _fieldThree.text +
-                      _fieldFour.text;
-                });
-                validateOtp();
-              },
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      validateOtp();
+                    },
               child: const Text('Verify', style: TextStyle(fontSize: 18)),
               style: elevatedButton(MediaQuery.of(context).size.width),
             ),
@@ -107,20 +101,19 @@ class _OtpVerificationState extends State<OtpVerification> {
               height: 30,
             ),
             // Display the entered OTP code
-            Align(
-              alignment: Alignment.center,
-              child: InkWell(
-                onTap: () {
-                  if (_timerValue == "00:00") {
-                    ResendOtp();
-                  }
-                },
-                child: const Text(
-                  "Resend",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            if (_timerValue == "00:00")
+              Align(
+                alignment: Alignment.center,
+                child: InkWell(
+                  onTap: () {
+                    resendOtp();
+                  },
+                  child: const Text(
+                    "Resend",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
                 ),
               ),
-            ),
             sizedBox,
             Align(
               alignment: Alignment.center,
@@ -154,11 +147,17 @@ class _OtpVerificationState extends State<OtpVerification> {
     });
   }
 
-  void ResendOtp() {
+  void resendOtp() async {
     setTimerValue();
+    dynamic res = await Repository().validateLogin(mobile: widget.mobile);
   }
 
   validateOtp() async {
+    setState(() {
+      _otp =
+          _fieldOne.text + _fieldTwo.text + _fieldThree.text + _fieldFour.text;
+      isLoading = true;
+    });
     final res =
         await Repository().validateOtp(mobile: widget.mobile, otp: _otp);
     if (res["status"]) {
@@ -183,7 +182,11 @@ class _OtpVerificationState extends State<OtpVerification> {
             MaterialPageRoute(builder: (context) => const BottomNavBar()));
       }
     } else {
-      return "User not exist";
+      var snackBar = resSnackBar(res['message'], true);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(snackBar)
+          .closed
+          .then((value) => {setState(() => isLoading = false)});
     }
   }
 }

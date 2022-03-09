@@ -35,8 +35,8 @@ class Repository {
     return await _apiProvider.getServiceSliders();
   }
 
-  Future<DateModel?> fetchInactiveAppoinmentDate() async {
-    return await _apiProvider.fetchInactiveAppoinmentDate();
+  Future<DateModel?> fetchInactiveAppointmentDate() async {
+    return await _apiProvider.fetchInactiveAppointmentDate();
   }
 
   Future<TimeSlotModel?> fetchTimeSlots() async {
@@ -78,6 +78,7 @@ class Repository {
   confirmAppointment({data}) async {
     return await _apiProvider.confirmAppointment(data: data);
   }
+
   editUser({data}) async {
     return await _apiProvider.editUser(data: data);
   }

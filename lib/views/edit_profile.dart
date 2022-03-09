@@ -29,6 +29,7 @@ class _EditProfileState extends State<EditProfile> {
   String genderValue = 'Male';
   final ImagePicker _picker = ImagePicker();
   XFile? imageFile;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -287,9 +288,11 @@ class _EditProfileState extends State<EditProfile> {
                 //     '* We will send a 4 digit verification code by SMS on your mobile number.'),
                 const SizedBox(height: 30),
                 ElevatedButton(
-                  onPressed: () {
-                    saveAppointment();
-                  },
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          saveProfile();
+                        },
                   child: const Text(
                     "Save",
                     style:
@@ -301,7 +304,10 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  saveAppointment() async {
+  saveProfile() async {
+    setState(() {
+      isLoading = true;
+    });
     var data = {
       "cust_name": name.text,
       "gender": genderValue,
@@ -309,11 +315,19 @@ class _EditProfileState extends State<EditProfile> {
     };
 
     dynamic res = await Repository().editUser(data: data);
+    var snackBar;
     if (res['status']) {
       userDetails.name = name.text;
       userDetails.gender = genderValue;
       userDetails.dob = dobDate.text;
       await SharedPreferencesHelper.saveUserDetails(userDetails);
+      snackBar = resSnackBar('Your profile details has been updated!', false);
+    } else {
+      snackBar = resSnackBar(res['message'], true);
     }
+    ScaffoldMessenger.of(context)
+        .showSnackBar(snackBar)
+        .closed
+        .then((value) => {setState(() => isLoading = false)});
   }
 }

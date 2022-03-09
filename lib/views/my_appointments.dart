@@ -22,7 +22,7 @@ class _MyAppointmentsState extends State<MyAppointments>
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: 2);
-    context.read<MyAppoinmentProvider>().fetchUpcoming();
+    context.read<MyAppointmentProvider>().fetchUpcoming();
   }
 
   @override
@@ -38,9 +38,9 @@ class _MyAppointmentsState extends State<MyAppointments>
         setState(() {
           _activeTabIndex = _tabController.index;
           if (_activeTabIndex == 0) {
-            context.read<MyAppoinmentProvider>().fetchUpcoming();
+            context.read<MyAppointmentProvider>().fetchUpcoming();
           } else {
-            context.read<MyAppoinmentProvider>().fetchPast();
+            context.read<MyAppointmentProvider>().fetchPast();
           }
         });
       }
@@ -116,7 +116,7 @@ class _MyAppointmentsState extends State<MyAppointments>
               SizedBox(
                 height: MediaQuery.of(context).size.height * .77,
                 child: SizedBox(
-                  child: Consumer<MyAppoinmentProvider>(
+                  child: Consumer<MyAppointmentProvider>(
                       builder: (context, value, child) {
                     if (_activeTabIndex == 0
                         ? value.upcoming?.appointmentUpcoming == null

@@ -18,12 +18,24 @@ ButtonStyle elevatedButton(width) {
   );
 }
 
+SnackBar resSnackBar(String text, bool isError) {
+  return SnackBar(
+    content: Text(
+      text,
+      style: const TextStyle(fontSize: 14),
+    ),
+    backgroundColor: isError ? Colors.red.shade800 : primaryColor,
+    elevation: 5,
+    duration: const Duration(seconds: 2),
+  );
+}
+
 InputDecoration inputTextDecoration = InputDecoration(
   border: OutlineInputBorder(
     borderSide: BorderSide(color: bodyTextColor),
     borderRadius: BorderRadius.circular(10),
   ),
-  disabledBorder:OutlineInputBorder(
+  disabledBorder: OutlineInputBorder(
     borderSide: BorderSide(color: bodyTextColor),
     borderRadius: BorderRadius.circular(10),
   ),
@@ -33,4 +45,3 @@ InputDecoration inputTextDecoration = InputDecoration(
   ),
   contentPadding: const EdgeInsets.all(12),
 );
-

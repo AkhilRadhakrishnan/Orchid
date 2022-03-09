@@ -17,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController name = TextEditingController();
   TextEditingController mail = TextEditingController();
   TextEditingController mobile = TextEditingController();
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,9 +105,11 @@ class _LoginPageState extends State<LoginPage> {
                     '* We will send a 4 digit verification code by SMS on your mobile number.'),
                 const SizedBox(height: 30),
                 ElevatedButton(
-                  onPressed: () {
-                    onLoginorRegister();
-                  },
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          onLoginorRegister();
+                        },
                   child: const Text(
                     "Continue",
                     style:
@@ -119,6 +122,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   onLoginorRegister() async {
+    setState(() {
+      isLoading = true;
+    });
     dynamic res;
     if (widget.loginView) {
       res = await Repository().validateLogin(mobile: mobile.text); // API Call
@@ -127,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
         "cust_name": name.text,
         "email": mail.text,
         "contact_no": mobile.text,
-        "password": "123456789"
+        // "password": "123456789"
       };
       res = await Repository().validateRegister(data: data); //
     }
@@ -135,10 +141,11 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => OtpVerification(mobile: mobile.text)));
     } else {
-      return "User not exist";
+      var snackBar = resSnackBar(res['message'], true);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(snackBar)
+          .closed
+          .then((value) => {setState(() => isLoading = false)});
     }
-
-    // Navigator.of(context).pushReplacement(MaterialPageRoute(
-    //     builder: (context) => OtpVerification(mobile: mobile.text)));
   }
 }

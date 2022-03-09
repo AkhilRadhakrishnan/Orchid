@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/models/date_timeslot.dart';
 import 'package:orchid/views/my_appointments.dart';
+import 'package:orchid/views/service_booking_page.dart';
 
 import '../views/doctor_appointment.dart';
 
@@ -68,7 +69,6 @@ class _TimeSlotTabState extends State<TimeSlotTab>
                 controller: _tabController,
                 children: [
                   GridView.builder(
-                      // itemCount: morningSlots.length,
                       itemCount: widget.timeSlots.am?.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
@@ -81,6 +81,8 @@ class _TimeSlotTabState extends State<TimeSlotTab>
                               selectedTime =
                                   widget.timeSlots.am!.elementAt(index);
                               DoctorAppointment.of(context)?.selectedTime =
+                                  selectedTime;
+                              ProcedurePage.of(context)?.selectedTime =
                                   selectedTime;
                             });
                           },

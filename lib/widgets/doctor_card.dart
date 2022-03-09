@@ -39,7 +39,7 @@ class DoctorCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Expanded(
-                  flex: 6,
+                  flex: 5,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -52,7 +52,7 @@ class DoctorCard extends StatelessWidget {
                           style: theme.textTheme.bodyText2
                               ?.copyWith(fontSize: 12, color: selectTextColor())),
                       const SizedBox(
-                        height: 25,
+                        height: 40,
                       ),
                       if (noPatients == null)
                         Text('Patients',
@@ -72,7 +72,7 @@ class DoctorCard extends StatelessWidget {
                     child: Image.network(
                       person!.image!,
                       fit: BoxFit.cover,
-                      height: 115,
+                      height: 130,
                     ),
                   ),
                 ),

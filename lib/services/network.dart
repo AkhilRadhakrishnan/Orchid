@@ -30,6 +30,7 @@ class Network {
     var fullUrl = Uri.parse(url);
     return await http.get(fullUrl, headers: _setHeaders());
   }
+
   getAuthRequest({url}) async {
     var fullUrl = Uri.parse(url);
     await _getToken();

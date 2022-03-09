@@ -33,13 +33,9 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => DoctorModel()),
-        ChangeNotifierProvider(
-          create: (_) => DoctorProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => DoctorProvider()),
         ChangeNotifierProvider(create: (_) => NurseModel()),
-        ChangeNotifierProvider(
-          create: (_) => NurseProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => NurseProvider()),
         ChangeNotifierProvider(create: (_) => SpecialitiesModel()),
         ChangeNotifierProvider(create: (_) => SpecialitiesProvider()),
         ChangeNotifierProvider(create: (_) => SliderModel()),
@@ -48,8 +44,8 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => ServicesProvider()),
         ChangeNotifierProvider(create: (_) => ServiceSliderModel()),
         ChangeNotifierProvider(create: (_) => ServiceSliderProvider()),
-        ChangeNotifierProvider(create: (_) => AppoinmentProvider()),
-        ChangeNotifierProvider(create: (_) => MyAppoinmentProvider())
+        ChangeNotifierProvider(create: (_) => AppointmentProvider()),
+        ChangeNotifierProvider(create: (_) => MyAppointmentProvider())
       ],
       builder: (context, child) {
         return MaterialApp(

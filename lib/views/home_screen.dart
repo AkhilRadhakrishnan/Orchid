@@ -64,9 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60.0),
+        preferredSize: const Size.fromHeight(50.0),
         child: Padding(
-          padding: const EdgeInsets.only(top: 20.0),
+          padding: const EdgeInsets.only(top: 15.0),
           child: InkWell(
             child: ListTile(
               leading: Container(
@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         (userDetails.image == null || userDetails.image == '')
                             ? AssetImage('assets/images/user.png')
                             : NetworkImage(userDetails.image!) as ImageProvider,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                   ),
                 ),
               ),
@@ -130,9 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Consumer<SliderProvider>(builder: (context, value, child) {
               if (value.sliders?.sliders == null) {
                 return const Center(
-                    child: CircularProgressIndicator(
-                  color: primaryColor,
-                ));
+                    child: CircularProgressIndicator());
               }
               return Column(children: [
                 Container(
@@ -162,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             margin: const EdgeInsets.symmetric(horizontal: 5.0),
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                fit: BoxFit.fitWidth,
+                                fit: BoxFit.fitHeight,
                                 image: NetworkImage(images.image.toString()),
                               ),
                             ),

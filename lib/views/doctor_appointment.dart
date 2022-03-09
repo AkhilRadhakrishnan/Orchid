@@ -42,13 +42,8 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
   final DatePickerController _dateController = DatePickerController();
   String _selectedDateView = formatDate(DateTime.now()).text;
   DateTime _selectedDateApi = DateTime.now();
-  String descText =
-      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry'
-      'standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.'
-      ' It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.'
-      ' It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with '
-      'desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.';
   bool isExpanded = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -59,8 +54,8 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
       _selectedDateApi = DateTime.parse(widget.appointment!.date!);
       _selectedTime = widget.appointment!.time!;
     }
-    context.read<AppoinmentProvider>().fetchInactiveAppoinmentDate();
-    context.read<AppoinmentProvider>().fetchTimeSlots();
+    context.read<AppointmentProvider>().fetchInactiveAppointmentDate();
+    context.read<AppointmentProvider>().fetchTimeSlots();
   }
 
   @override
@@ -159,7 +154,7 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
             ),
             Text(_selectedDateView.toString()),
             sizedBox,
-            Consumer<AppoinmentProvider>(builder: (context, value, child) {
+            Consumer<AppointmentProvider>(builder: (context, value, child) {
               if (value.dateList == null) {
                 return const Center(child: CircularProgressIndicator());
               }
@@ -187,7 +182,7 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
             ),
             SizedBox(
                 height: 200,
-                child: Consumer<AppoinmentProvider>(
+                child: Consumer<AppointmentProvider>(
                     builder: (context, value, child) {
                   if (value.timeSlot == null) {
                     return const Center(child: CircularProgressIndicator());
@@ -202,7 +197,7 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
               height: 10,
             ),
             ElevatedButton(
-              onPressed: (_selectedTime == "")
+              onPressed: (_selectedTime == "" || isLoading)
                   ? null
                   : () async {
                       await takeAppointment();
@@ -213,7 +208,7 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
                         : "Confirm") +
                     " Appointment",
                 style: const TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.normal),
+                    fontSize: 16, fontWeight: FontWeight.normal),
               ),
               style: elevatedButton(MediaQuery.of(context).size.width),
             ),
@@ -232,6 +227,9 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
   }
 
   takeAppointment() async {
+    setState(() {
+      isLoading = true;
+    });
     var cDate = DateFormat('yyyy-MM-dd').format(_selectedDateApi);
     var newAppnmt = {
       "appointment_date": cDate,
@@ -256,10 +254,15 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
         res = await Repository().confirmAppointment(data: newAppnmt);
       }
       if (res["status"]) {
+        isLoading = false;
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => MyAppointments()));
       } else {
-        return "User not exist";
+        var snackBar = resSnackBar(res['message'], true);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(snackBar)
+            .closed
+            .then((value) => {setState(() => isLoading = false)});
       }
     }
   }

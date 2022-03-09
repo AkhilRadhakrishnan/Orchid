@@ -8,10 +8,9 @@ import 'package:orchid/models/services.dart';
 import 'package:orchid/provider/date_time_provider.dart';
 import 'package:orchid/provider/doctor_nurse_provider.dart';
 import 'package:orchid/util/formats.dart';
-import 'package:orchid/views/my_appointments.dart';
 import 'package:orchid/widgets/service_card.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/src/intl/date_format.dart';
+import 'package:intl/intl.dart';
 import '../services/repository.dart';
 import '../util/shared_preferences_helper.dart';
 import '../widgets/appointment_time_tab.dart';
@@ -24,6 +23,9 @@ class ProcedurePage extends StatefulWidget {
 
   @override
   State<ProcedurePage> createState() => _ProcedurePageState();
+
+  static _ProcedurePageState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_ProcedurePageState>();
 }
 
 class _ProcedurePageState extends State<ProcedurePage> {
@@ -32,9 +34,9 @@ class _ProcedurePageState extends State<ProcedurePage> {
 
   final DatePickerController _dateController = DatePickerController();
   String _selectedDateView = formatDate(DateTime.now()).text;
-  DateTime _selectedDateApi = DateTime.now();
+  final DateTime _selectedDateApi = DateTime.now();
   int current = 0;
-  String? selectedNurse;
+  String? selectedNurse = "";
   final timeSlots = {
     "am": [
       "09:00 am",
@@ -81,14 +83,15 @@ class _ProcedurePageState extends State<ProcedurePage> {
       "11:45 pm",
     ]
   };
-  var timeSlotModel;
+  TimeSlotModel timeSlotModel = TimeSlotModel();
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     timeSlotModel = timeSlotModelFromJson(jsonEncode(timeSlots));
     context.read<NurseProvider>().fetchNurses();
-    context.read<AppoinmentProvider>().fetchInactiveAppoinmentDate();
+    context.read<AppointmentProvider>().fetchInactiveAppointmentDate();
   }
 
   @override
@@ -134,7 +137,7 @@ class _ProcedurePageState extends State<ProcedurePage> {
               ),
               Text(_selectedDateView.toString()),
               sizedBox,
-              Consumer<AppoinmentProvider>(builder: (context, value, child) {
+              Consumer<AppointmentProvider>(builder: (context, value, child) {
                 if (value.dateList == null) {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -200,24 +203,18 @@ class _ProcedurePageState extends State<ProcedurePage> {
               ),
               sizedBox,
               ElevatedButton(
-                  // child: Row(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: const [
-                  //     Text("Confirm Appointment"),
-                  //   ],
-                  // ),
-                  child: const Text("Confirm Appointment"),
-                  style: ElevatedButton.styleFrom(
-                    onPrimary: Colors.white,
-                    primary: primaryColor,
-                    elevation: 0,
-                    fixedSize: Size(MediaQuery.of(context).size.width, 50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)),
-                  ),
-                  onPressed: () {
-                    takeEnquiry();
-                  }),
+                onPressed:
+                    (_selectedTime == "" || selectedNurse == "" || isLoading)
+                        ? null
+                        : () async {
+                            await takeEnquiry();
+                          },
+                child: const Text(
+                  'Send Enquiry',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                ),
+                style: elevatedButton(MediaQuery.of(context).size.width),
+              ),
             ],
           ),
         ),
@@ -234,6 +231,9 @@ class _ProcedurePageState extends State<ProcedurePage> {
   }
 
   takeEnquiry() async {
+    setState(() {
+      isLoading = true;
+    });
     var cDate = DateFormat('yyyy-MM-dd').format(_selectedDateApi);
     var data = {
       "appointment_date": cDate,
@@ -248,19 +248,16 @@ class _ProcedurePageState extends State<ProcedurePage> {
           context, MaterialPageRoute(builder: (context) => LandingPage()));
     } else {
       dynamic res = await Repository().enquiryAppointment(data: data);
-
       if (res["status"]) {
-        final snackBar = SnackBar(
-          content: const Text('Hi, I am a SnackBar!'),
-          backgroundColor: (Colors.black12),
-          action: SnackBarAction(
-            label: 'dismiss',
-            onPressed: () {},
-          ),
-        );
+        var snackBar =
+            resSnackBar('Enquiry sent! Will contact back you soon', false);
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else {
-        return "User not exist";
+        var snackBar = resSnackBar(res['message'], true);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(snackBar)
+            .closed
+            .then((value) => {setState(() => isLoading = false)});
       }
     }
   }
