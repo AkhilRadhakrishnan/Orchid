@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/helpers/theme.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:orchid/views/home_screen.dart';
 
 import '../models/authentication.dart';
 import '../services/repository.dart';
@@ -92,9 +93,29 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
+      appBar: AppBar(
+        toolbarHeight:40,
+        backgroundColor: backgroundColor,
+        elevation: 0,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: bodyTextColor,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        centerTitle: true,
+        title: const Text(
+          'Edit Profile',
+        ),
+      ),
       body: SingleChildScrollView(
           padding:
-              const EdgeInsets.only(left: 15, right: 15, bottom: 15, top: 50),
+              const EdgeInsets.all(15),
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
@@ -299,7 +320,7 @@ class _EditProfileState extends State<EditProfile> {
                         TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
                   ),
                   style: elevatedButton(MediaQuery.of(context).size.width),
-                )
+                ),
               ])),
     );
   }

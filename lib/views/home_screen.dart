@@ -234,6 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
             sizedBox,
             sizedBox,
             Row(
+
               children: <Widget>[
                 const Text("Available Doctors"),
                 const Spacer(),

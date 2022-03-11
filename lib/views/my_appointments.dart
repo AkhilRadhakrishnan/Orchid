@@ -3,6 +3,7 @@ import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/helpers/theme.dart';
 import 'package:orchid/models/my_appointment.dart';
 import 'package:orchid/provider/my_appoinment_provider.dart';
+import 'package:orchid/widgets/bottom_nav.dart';
 import 'package:orchid/widgets/my_appoinment_card.dart';
 import 'package:provider/provider.dart';
 
@@ -58,16 +59,15 @@ class _MyAppointmentsState extends State<MyAppointments>
                 color: bodyTextColor,
               ),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => BottomNavBar()));
               },
             ),
           ),
           // Icon(Icons.menu,color: primaryColor,),
-          title: const Padding(
-            padding: EdgeInsets.all(80.0),
-            child: Text(
-              'My Appointments',
-            ),
+          centerTitle: true,
+          title: const Text(
+            'My Appointments',
           ),
         ),
         body: SingleChildScrollView(
@@ -122,6 +122,13 @@ class _MyAppointmentsState extends State<MyAppointments>
                         ? value.upcoming?.appointmentUpcoming == null
                         : value.past?.appointmentPast == null) {
                       return const Center(child: CircularProgressIndicator());
+                    } else if ((_activeTabIndex == 0
+                            ? value.upcoming!.appointmentUpcoming!.length
+                            : value.past!.appointmentPast!.length) ==
+                        0) {
+                      return const Center(
+                          child: Text(
+                              'No Appointments yet,PLease book an Appointment'));
                     }
                     return ListView.separated(
                       separatorBuilder: (BuildContext context, int index) {
@@ -137,6 +144,7 @@ class _MyAppointmentsState extends State<MyAppointments>
                             ? value.upcoming?.appointmentUpcoming
                                 ?.elementAt(index)
                             : value.past?.appointmentPast?.elementAt(index);
+
                         return MyAppointmentCard(
                             index: _activeTabIndex, appointment: appointment!);
                       },

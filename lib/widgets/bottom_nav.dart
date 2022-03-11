@@ -40,12 +40,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
               ),
               label: ''),
           BottomNavigationBarItem(
-              icon: Icon(Icons.notification_add_rounded), label: ''),
+              icon: Icon(Icons.assignment_outlined ), label: ''),
         ],
         onTap: (index) async {
           if (index == 1 || index == 2) {
-            var u = await SharedPreferencesHelper.getAccessToken();
-            debugPrint(u);
             if (await SharedPreferencesHelper.getAccessToken() == null) {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => LandingPage()));

@@ -45,12 +45,12 @@ class LandingPage extends StatelessWidget {
                   style: TextStyle(fontSize: 27, color: Colors.grey.shade700),
                 ),
                 sizedBox,
-                Text("Providing Quality Care in Dermatology and Cosmetology,",
+                Text("Providing Quality Care in Dermatology and Cosmetology,Family Medicine, Gynecology, and Dietetics in Doha",
                     style:
-                        TextStyle(fontSize: 14, color: Colors.grey.shade600)),
-                Text("Family Medicine, Gynecology, and Dietetics in Doha",
-                    style:
-                        TextStyle(fontSize: 14, color: Colors.grey.shade600)),
+                        TextStyle(fontSize: 14, color: Colors.grey.shade600),textAlign: TextAlign.center),
+                // Text("Family Medicine, Gynecology, and Dietetics in Doha",
+                //     style:
+                //         TextStyle(fontSize: 14, color: Colors.grey.shade600)),
                 const SizedBox(
                   height: 50,
                 ),

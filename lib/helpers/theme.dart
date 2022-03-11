@@ -26,7 +26,7 @@ SnackBar resSnackBar(String text, bool isError) {
     ),
     backgroundColor: isError ? Colors.red.shade800 : primaryColor,
     elevation: 5,
-    duration: const Duration(seconds: 2),
+    duration: Duration(seconds: (isError ? 3 : 2)),
   );
 }
 

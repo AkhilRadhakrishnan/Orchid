@@ -10,6 +10,7 @@ import 'package:orchid/util/formats.dart';
 import 'package:orchid/util/shared_preferences_helper.dart';
 import 'package:orchid/views/landing_page.dart';
 import 'package:orchid/views/my_appointments.dart';
+import 'package:orchid/widgets/bottom_nav.dart';
 import 'package:provider/provider.dart';
 
 import '../services/repository.dart';
@@ -44,7 +45,8 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
   DateTime _selectedDateApi = DateTime.now();
   bool isExpanded = false;
   bool isLoading = false;
-
+  TimeSlotModel? timeSlotModel = null;
+  String timeSlotErrorMsg = '';
   @override
   void initState() {
     super.initState();
@@ -55,7 +57,7 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
       _selectedTime = widget.appointment!.time!;
     }
     context.read<AppointmentProvider>().fetchInactiveAppointmentDate();
-    context.read<AppointmentProvider>().fetchTimeSlots();
+    getTimeSlots();
   }
 
   @override
@@ -74,17 +76,20 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
               color: bodyTextColor,
             ),
             onPressed: () {
-              Navigator.of(context).pop();
+              if (widget.appointmentStatus == 'update') {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MyAppointments()));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const BottomNavBar()));
+              }
             },
           ),
         ),
-        // Icon(Icons.menu,color: primaryColor,),
-        title: const Padding(
-          padding: EdgeInsets.all(75.0),
-          child: Text(
-            'Appointment',
-          ),
-        ),
+        centerTitle: true,
+        title: Text('Appoinment'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(15),
@@ -174,6 +179,7 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
                     _selectedDateView = formatDate(date).text;
                     _selectedDateApi = date;
                   });
+                  getTimeSlots();
                 },
               );
             }),
@@ -182,17 +188,13 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
             ),
             SizedBox(
                 height: 200,
-                child: Consumer<AppointmentProvider>(
-                    builder: (context, value, child) {
-                  if (value.timeSlot == null) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  return TimeSlotTab(
-                      timeSlots: value.timeSlot!,
-                      selectedTime: widget.appointmentStatus == 'update'
-                          ? widget.appointment!.time
-                          : '');
-                })),
+                child: timeSlotModel == null
+                    ? const Center(child: CircularProgressIndicator())
+                    : TimeSlotTab(
+                        timeSlotsValue: timeSlotModel!,
+                        selectedTime: widget.appointmentStatus == 'update'
+                            ? widget.appointment!.time
+                            : '')),
             const SizedBox(
               height: 10,
             ),
@@ -255,6 +257,8 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
       }
       if (res["status"]) {
         isLoading = false;
+        var snackBar = resSnackBar('Appointment Booked!', false);
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => MyAppointments()));
       } else {
@@ -264,6 +268,25 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
             .closed
             .then((value) => {setState(() => isLoading = false)});
       }
+    }
+  }
+
+  getTimeSlots() async {
+    timeSlotModel = null;
+    _selectedTime = '';
+    var cDate = DateFormat('yyyy-MM-dd').format(_selectedDateApi);
+    var data = {
+      "doctor_id": widget.doctor.id,
+      "date_s": cDate,
+    };
+    dynamic res = await Repository().fetchTimeSlots(data: data);
+    if (res['status']) {
+      setState(() {
+        timeSlotModel = TimeSlotModel.fromJson(res);
+      });
+    } else {
+      var snackBar = resSnackBar(res['message'], true);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 }

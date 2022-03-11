@@ -114,6 +114,7 @@ class MyAppointmentCard extends StatelessWidget {
       }
     } else {
       var data = {
+        'id': appointment.dr_id,
         'image': appointment.image,
         "name": appointment.doctor,
         "speciality": appointment.speciality,

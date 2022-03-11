@@ -9,9 +9,9 @@ import '../views/doctor_appointment.dart';
 typedef void StringCallback(String val);
 
 class TimeSlotTab extends StatefulWidget {
-  final TimeSlotModel timeSlots;
+  final TimeSlotModel timeSlotsValue;
   String? selectedTime;
-  TimeSlotTab({Key? key, required this.timeSlots, this.selectedTime})
+  TimeSlotTab({Key? key, required this.timeSlotsValue, this.selectedTime})
       : super(key: key);
   @override
   _TimeSlotTabState createState() => _TimeSlotTabState();
@@ -68,94 +68,100 @@ class _TimeSlotTabState extends State<TimeSlotTab>
               body: TabBarView(
                 controller: _tabController,
                 children: [
-                  GridView.builder(
-                      itemCount: widget.timeSlots.am?.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3, childAspectRatio: 1.8),
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              selectedTime =
-                                  widget.timeSlots.am!.elementAt(index);
-                              DoctorAppointment.of(context)?.selectedTime =
-                                  selectedTime;
-                              ProcedurePage.of(context)?.selectedTime =
-                                  selectedTime;
-                            });
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(
-                                top: 10, right: 10, bottom: 10),
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: selectedTime ==
-                                      widget.timeSlots.am!.elementAt(index)
-                                  ? primaryColor
-                                  : Colors.white,
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10.0),
+                  if (widget.timeSlotsValue.timeslots?.am!.length == 0)
+                    const Center(child: Text('No Appointment slots available')),
+                  if (widget.timeSlotsValue.timeslots?.am!.length != 0)
+                    GridView.builder(
+                        itemCount: widget.timeSlotsValue.timeslots?.am!.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3, childAspectRatio: 1.8),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          var am = widget.timeSlotsValue.timeslots!.am!
+                              .elementAt(index);
+                          return InkWell(
+                            onTap: () {
+                              setState(() {
+                                selectedTime = am;
+                                DoctorAppointment.of(context)?.selectedTime =
+                                    selectedTime;
+                                ProcedurePage.of(context)?.selectedTime =
+                                    selectedTime;
+                              });
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(
+                                  top: 10, right: 10, bottom: 10),
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: selectedTime == am
+                                    ? primaryColor
+                                    : Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10.0),
+                                ),
                               ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                widget.timeSlots.am!.elementAt(index),
-                                style: TextStyle(
-                                  color: selectedTime ==
-                                          widget.timeSlots.am!.elementAt(index)
-                                      ? Colors.white
-                                      : bodyTextColor,
+                              child: Center(
+                                child: Text(
+                                  am,
+                                  style: TextStyle(
+                                    color: selectedTime == am
+                                        ? Colors.white
+                                        : bodyTextColor,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      }),
-                  GridView.builder(
-                      itemCount: widget.timeSlots.pm?.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3, childAspectRatio: 1.8),
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              selectedTime =
-                                  widget.timeSlots.pm!.elementAt(index);
-                              DoctorAppointment.of(context)?.selectedTime =
-                                  selectedTime;
-                            });
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(
-                                top: 10, right: 10, bottom: 10),
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: selectedTime ==
-                                      widget.timeSlots.pm!.elementAt(index)
-                                  ? primaryColor
-                                  : Colors.white,
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10.0),
+                          );
+                        }),
+                  if (widget.timeSlotsValue.timeslots?.pm!.length == 0)
+                    const Center(child: Text('No Appointment slots available')),
+                  if (widget.timeSlotsValue.timeslots?.pm!.length != 0)
+                    GridView.builder(
+                        itemCount: widget.timeSlotsValue.timeslots!.pm?.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3, childAspectRatio: 1.8),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          var pm = widget.timeSlotsValue.timeslots!.pm!
+                              .elementAt(index);
+                          return InkWell(
+                            onTap: () {
+                              setState(() {
+                                selectedTime = pm;
+                                DoctorAppointment.of(context)?.selectedTime =
+                                    selectedTime;
+                              });
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(
+                                  top: 10, right: 10, bottom: 10),
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: selectedTime ==
+                                        widget.timeSlotsValue.timeslots?.pm!
+                                            .elementAt(index)
+                                    ? primaryColor
+                                    : Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10.0),
+                                ),
                               ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                widget.timeSlots.pm!.elementAt(index),
-                                style: TextStyle(
-                                  color: selectedTime ==
-                                          widget.timeSlots.pm!.elementAt(index)
-                                      ? Colors.white
-                                      : bodyTextColor,
+                              child: Center(
+                                child: Text(
+                                  pm,
+                                  style: TextStyle(
+                                    color: selectedTime == pm
+                                        ? Colors.white
+                                        : bodyTextColor,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      }),
+                          );
+                        }),
                 ],
               ),
             );

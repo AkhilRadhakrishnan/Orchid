@@ -8,6 +8,7 @@ import 'package:orchid/models/services.dart';
 import 'package:orchid/provider/date_time_provider.dart';
 import 'package:orchid/provider/doctor_nurse_provider.dart';
 import 'package:orchid/util/formats.dart';
+import 'package:orchid/views/services_page.dart';
 import 'package:orchid/widgets/service_card.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -38,50 +39,52 @@ class _ProcedurePageState extends State<ProcedurePage> {
   int current = 0;
   String? selectedNurse = "";
   final timeSlots = {
-    "am": [
-      "09:00 am",
-      "09:15 am",
-      "09:30 am",
-      "09:45 am",
-      "10:00 am",
-      "10:15 am",
-      "10:30 am",
-      "10:45 am",
-      "11:00 am",
-      "11:15 am",
-      "11:30 am",
-      "11:45 am"
-    ],
-    "pm": [
-      "05:00 pm",
-      "05:15 pm",
-      "05:30 pm",
-      "05:45 pm",
-      "06:00 pm",
-      "06:15 pm",
-      "06:30 pm",
-      "06:45 pm",
-      "07:00 pm",
-      "07:15 pm",
-      "07:30 pm",
-      "07:45 pm",
-      "08:00 pm",
-      "08:15 pm",
-      "08:30 pm",
-      "08:45 pm",
-      "09:00 pm",
-      "09:15 pm",
-      "09:30 pm",
-      "09:45 pm",
-      "10:00 pm",
-      "10:15 pm",
-      "10:30 pm",
-      "10:45 pm",
-      "11:00 pm",
-      "11:15 pm",
-      "11:30 pm",
-      "11:45 pm",
-    ]
+    'timeslots': {
+      "am": [
+        "09:00 am",
+        "09:15 am",
+        "09:30 am",
+        "09:45 am",
+        "10:00 am",
+        "10:15 am",
+        "10:30 am",
+        "10:45 am",
+        "11:00 am",
+        "11:15 am",
+        "11:30 am",
+        "11:45 am"
+      ],
+      "pm": [
+        "05:00 pm",
+        "05:15 pm",
+        "05:30 pm",
+        "05:45 pm",
+        "06:00 pm",
+        "06:15 pm",
+        "06:30 pm",
+        "06:45 pm",
+        "07:00 pm",
+        "07:15 pm",
+        "07:30 pm",
+        "07:45 pm",
+        "08:00 pm",
+        "08:15 pm",
+        "08:30 pm",
+        "08:45 pm",
+        "09:00 pm",
+        "09:15 pm",
+        "09:30 pm",
+        "09:45 pm",
+        "10:00 pm",
+        "10:15 pm",
+        "10:30 pm",
+        "10:45 pm",
+        "11:00 pm",
+        "11:15 pm",
+        "11:30 pm",
+        "11:45 pm",
+      ]
+    }
   };
   TimeSlotModel timeSlotModel = TimeSlotModel();
   bool isLoading = false;
@@ -89,7 +92,7 @@ class _ProcedurePageState extends State<ProcedurePage> {
   @override
   void initState() {
     super.initState();
-    timeSlotModel = timeSlotModelFromJson(jsonEncode(timeSlots));
+    timeSlotModel = TimeSlotModel.fromJson(timeSlots);
     context.read<NurseProvider>().fetchNurses();
     context.read<AppointmentProvider>().fetchInactiveAppointmentDate();
   }
@@ -113,12 +116,9 @@ class _ProcedurePageState extends State<ProcedurePage> {
             },
           ),
         ),
-        // Icon(Icons.menu,color: primaryColor,),
-        title: const Padding(
-          padding: EdgeInsets.all(80.0),
-          child: Text(
-            'Service Enquiry',
-          ),
+        centerTitle: true,
+        title: const Text(
+          'Service Enquiry',
         ),
       ),
       body: SafeArea(
@@ -165,7 +165,7 @@ class _ProcedurePageState extends State<ProcedurePage> {
               SizedBox(
                   height: 185,
                   child: TimeSlotTab(
-                    timeSlots: timeSlotModel,
+                    timeSlotsValue: timeSlotModel,
                   )),
               sizedBox,
               const Text('Choose Nurse'),
@@ -249,9 +249,11 @@ class _ProcedurePageState extends State<ProcedurePage> {
     } else {
       dynamic res = await Repository().enquiryAppointment(data: data);
       if (res["status"]) {
-        var snackBar =
-            resSnackBar('Enquiry sent! Will contact back you soon', false);
+        var snackBar = resSnackBar(
+            'Service Enquiry sent! Will contact back you soon', false);
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const ServicesPage()));
       } else {
         var snackBar = resSnackBar(res['message'], true);
         ScaffoldMessenger.of(context)

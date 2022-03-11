@@ -110,19 +110,19 @@ class ApiProvider {
     return null;
   }
 
-  Future<TimeSlotModel?> fetchTimeSlots() async {
-    try {
-      http.Response response =
-          await auth.getRequest(url: baseUrl + "Appointment/timeslotForDoctor");
-      if (response.statusCode == 200) {
-        return TimeSlotModel.fromJson(json.decode(response.body));
-      }
-    } catch (error) {
-      jsonDecode(error.toString())["message"];
-      return null;
-    }
-    return null;
-  }
+  // Future<TimeSlotModel?> fetchTimeSlots() async {
+  //   try {
+  //     http.Response response =
+  //         await auth.getRequest(url: baseUrl + "Appointment/timeslotForDoctor");
+  //     if (response.statusCode == 200) {
+  //       return TimeSlotModel.fromJson(json.decode(response.body));
+  //     }
+  //   } catch (error) {
+  //     jsonDecode(error.toString())["message"];
+  //     return null;
+  //   }
+  //   return null;
+  // }
 
   Future<MyAppoinmentUpcomingModel?> fetchUpcoming() async {
     try {
@@ -273,6 +273,21 @@ class ApiProvider {
     try {
       http.Response response = await auth.postAuthRequest(
           url: baseUrl + "ConfirmAppointment/service", data: data);
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        return errorHandling(response.statusCode);
+      }
+    } catch (error) {
+      jsonDecode(error.toString())["message"];
+      return null;
+    }
+  }
+
+  fetchTimeSlots({data}) async {
+    try {
+      http.Response response = await auth.postAuthRequest(
+          url: baseUrl + "Appointment/timeslotForDoctor", data: data);
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {

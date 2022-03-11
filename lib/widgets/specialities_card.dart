@@ -9,7 +9,7 @@ class SpecialitiesCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      width: MediaQuery.of(context).size.width * .21,
+      width: MediaQuery.of(context).size.width * .27,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15.0),

@@ -3,9 +3,12 @@ import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/provider/slider_provider.dart';
 import 'package:orchid/provider/specialities_provider.dart';
 import 'package:orchid/views/service_booking_page.dart';
+import 'package:orchid/widgets/bottom_nav.dart';
 import 'package:orchid/widgets/service_card.dart';
 import 'package:orchid/widgets/specialities_card.dart';
 import 'package:provider/provider.dart';
+
+import 'home_screen.dart';
 
 class ServicesPage extends StatefulWidget {
   const ServicesPage({Key? key}) : super(key: key);
@@ -39,16 +42,14 @@ class _ServicesPageState extends State<ServicesPage> {
               color: bodyTextColor,
             ),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(builder: (_) => const BottomNavBar()), (route) => false);
             },
           ),
         ),
-        // Icon(Icons.menu,color: primaryColor,),
-        title: const Padding(
-          padding: EdgeInsets.all(75.0),
-          child: Text(
-            'Services',
-          ),
+        centerTitle: true,
+        title: const Text(
+          'Services',
         ),
       ),
       body: SafeArea(

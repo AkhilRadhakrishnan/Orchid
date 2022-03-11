@@ -18,7 +18,7 @@ class DoctorCard extends StatelessWidget {
               ? (selected! ? primaryColor : Colors.white)
               : Colors.white),
       width: MediaQuery.of(context).size.width * .45,
-      padding: const EdgeInsets.only(top: 15, left: 10),
+      padding: const EdgeInsets.only(top: 10, left: 10),
       child: Container(
         alignment: Alignment.topLeft,
         child: Column(
@@ -36,7 +36,7 @@ class DoctorCard extends StatelessWidget {
                     theme.textTheme.bodyText2?.copyWith(color: selectTextColor())),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   flex: 5,
@@ -52,7 +52,7 @@ class DoctorCard extends StatelessWidget {
                           style: theme.textTheme.bodyText2
                               ?.copyWith(fontSize: 12, color: selectTextColor())),
                       const SizedBox(
-                        height: 40,
+                        height:40,
                       ),
                       if (noPatients == null)
                         Text('Patients',
@@ -66,13 +66,13 @@ class DoctorCard extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  flex: 7,
+                  flex: 6,
                   child: Container(
                     alignment: Alignment.bottomRight,
                     child: Image.network(
                       person!.image!,
                       fit: BoxFit.cover,
-                      height: 130,
+                      height: 115,
                     ),
                   ),
                 ),

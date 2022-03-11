@@ -26,12 +26,9 @@ class DoctorList extends StatelessWidget {
             },
           ),
         ),
-        // Icon(Icons.menu,color: primaryColor,),
-        title: const Padding(
-          padding: EdgeInsets.all(75.0),
-          child: Text(
-            'Specialists',
-          ),
+        centerTitle: true,
+        title: const Text(
+          'Specialists',
         ),
       ),
       body: SafeArea(

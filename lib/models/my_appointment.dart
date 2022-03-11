@@ -37,6 +37,7 @@ class Appointment {
       {this.id,
       this.date,
       this.time,
+      this.dr_id,
       this.doctor,
       this.type,
       this.image,
@@ -46,6 +47,7 @@ class Appointment {
   String? id;
   String? date;
   String? time;
+  String? dr_id;
   String? doctor;
   String? type;
   String? image;
@@ -56,6 +58,7 @@ class Appointment {
       id: json["app_id"],
       date: json["appointment_date"],
       time: json["app_time"],
+      dr_id: json['dr_id'],
       doctor: json["name"],
       type: json["designation"],
       image: json["image"],

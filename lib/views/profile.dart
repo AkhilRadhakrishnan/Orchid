@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/helpers/theme.dart';
@@ -6,6 +7,7 @@ import 'package:orchid/util/shared_preferences_helper.dart';
 import 'package:orchid/views/edit_profile.dart';
 import 'package:orchid/views/my_appointments.dart';
 import 'package:orchid/views/splash_screen.dart';
+import 'package:orchid/widgets/bottom_nav.dart';
 
 import '../models/authentication.dart';
 
@@ -53,9 +55,29 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
+      appBar: AppBar(
+        toolbarHeight: 40,
+        backgroundColor: backgroundColor,
+        elevation: 0,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: bodyTextColor,
+            ),
+            onPressed: () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => BottomNavBar()));
+            },
+          ),
+        ),
+        centerTitle: true,
+        title: const Text(
+          'My Profile',
+        ),
+      ),
       body: SingleChildScrollView(
-          padding:
-              const EdgeInsets.only(left: 15, right: 15, bottom: 15, top: 40),
+          padding: const EdgeInsets.all(15),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, children: <
                   Widget>[
@@ -184,9 +206,14 @@ class _ProfileState extends State<Profile> {
   void onLogout() async {
     var res = await Repository().logout();
     if (res['status']) {
+      var snackBar =
+      resSnackBar('Logout Successfully!',false);
       SharedPreferencesHelper.clearAll();
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => SplashScreen()));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (_) => SplashScreen()), (route) => false);
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => SplashScreen()));
     }
   }
 }
