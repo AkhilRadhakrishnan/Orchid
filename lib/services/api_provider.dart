@@ -298,4 +298,19 @@ class ApiProvider {
       return null;
     }
   }
+
+  picUser({data}) async {
+    try {
+      http.Response response = await auth.postAuthRequest(
+          url: baseUrl + "profile/upload_profile_photo", data: data);
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        return errorHandling(response.statusCode);
+      }
+    } catch (error) {
+      jsonDecode(error.toString())["message"];
+      return null;
+    }
+  }
 }

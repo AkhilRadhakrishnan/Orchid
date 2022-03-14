@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class LoginModel {
   LoginModel(
       {this.status, this.message, this.otp, this.access_token, this.user});
@@ -24,6 +26,7 @@ class User {
       this.name,
       this.contactNo,
       this.image,
+      this.decodedImage,
       this.gender,
       this.dob});
   String? id;
@@ -31,6 +34,7 @@ class User {
   String? name;
   String? email;
   String? image;
+  Uint8List? decodedImage;
   String? contactNo;
   String? gender;
   String? dob;
@@ -42,6 +46,7 @@ class User {
       name: json["cust_name"],
       contactNo: json["contact_no"],
       image: json["image"],
+      decodedImage: _getImageBinary(json['decodedImage']),
       gender: json["gender"],
       dob: json["dob"]);
 
@@ -53,8 +58,16 @@ class User {
       'cust_name': name,
       'contact_no': contactNo,
       'image': image,
+      'decodedImage': decodedImage,
       'gender': gender,
       'dob': dob
     };
   }
+}
+
+Uint8List _getImageBinary(dynamicList) {
+  List<int> intList =
+      dynamicList.cast<int>().toList(); //This is the magical line.
+  Uint8List data = Uint8List.fromList(intList);
+  return data;
 }

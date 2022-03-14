@@ -93,13 +93,30 @@ class _ProfileState extends State<Profile> {
                 children: [
                   sizedBox,
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Image.asset(
-                      'assets/images/user.png',
-                      width: MediaQuery.of(context).size.width * 0.25,
-                      height: MediaQuery.of(context).size.width * 0.25,
-                    ),
-                  ),
+                      borderRadius: BorderRadius.circular(10),
+                      child: userDetails.decodedImage != null
+                          ? Image.memory(
+                              userDetails.decodedImage!,
+                              fit: BoxFit.fill,
+                              width: MediaQuery.of(context).size.width * 0.25,
+                              height: MediaQuery.of(context).size.width * 0.25,
+                            )
+                          : (userDetails.image == null
+                              ? Image.asset(
+                                  'assets/images/user.png',
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.25,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.25,
+                                )
+                              : Image.network(
+                                  userDetails.image!,
+                                  fit: BoxFit.fill,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.25,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.25,
+                                ))),
                   sizedBox,
                   Text(
                     ((userDetails.name == "" || userDetails.name == null)
@@ -206,8 +223,7 @@ class _ProfileState extends State<Profile> {
   void onLogout() async {
     var res = await Repository().logout();
     if (res['status']) {
-      var snackBar =
-      resSnackBar('Logout Successfully!',false);
+      var snackBar = resSnackBar('Logout Successfully!', false);
       SharedPreferencesHelper.clearAll();
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       Navigator.pushAndRemoveUntil(context,

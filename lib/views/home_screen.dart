@@ -69,19 +69,26 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.only(top: 15.0),
           child: InkWell(
             child: ListTile(
-              leading: Container(
-                width: 40.0,
-                height: 40.0,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image:
-                        (userDetails.image == null || userDetails.image == '')
-                            ? AssetImage('assets/images/user.png')
-                            : NetworkImage(userDetails.image!) as ImageProvider,
-                    fit: BoxFit.fill,
-                  ),
-                ),
-              ),
+              leading: ClipRRect(
+                  child: userDetails.decodedImage != null
+                      ? Image.memory(
+                          userDetails.decodedImage!,
+                          fit: BoxFit.fill,
+                          width: MediaQuery.of(context).size.width * 0.12,
+                          height: MediaQuery.of(context).size.width * 0.12,
+                        )
+                      : (userDetails.image == null
+                          ? Image.asset(
+                              'assets/images/user.png',
+                              width: MediaQuery.of(context).size.width * 0.12,
+                              height: MediaQuery.of(context).size.width * 0.12,
+                            )
+                          : Image.network(
+                              userDetails.image!,
+                              fit: BoxFit.fill,
+                              width: MediaQuery.of(context).size.width * 0.12,
+                              height: MediaQuery.of(context).size.width * 0.12,
+                            ))),
               title: Text(
                 (accessToken == "" || accessToken == null)
                     ? 'Please Login'
@@ -115,9 +122,10 @@ class _HomeScreenState extends State<HomeScreen> {
               if (accessToken == "" || accessToken == null) {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => LandingPage()));
-              }else
-              {Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => EditProfile()));}
+              } else {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => EditProfile()));
+              }
             },
           ),
         ),
@@ -129,8 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             Consumer<SliderProvider>(builder: (context, value, child) {
               if (value.sliders?.sliders == null) {
-                return const Center(
-                    child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
               return Column(children: [
                 Container(
@@ -234,7 +241,6 @@ class _HomeScreenState extends State<HomeScreen> {
             sizedBox,
             sizedBox,
             Row(
-
               children: <Widget>[
                 const Text("Available Doctors"),
                 const Spacer(),

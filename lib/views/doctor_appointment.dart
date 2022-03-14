@@ -178,6 +178,7 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
                   setState(() {
                     _selectedDateView = formatDate(date).text;
                     _selectedDateApi = date;
+                    _selectedTime = '';
                   });
                   getTimeSlots();
                 },
@@ -192,9 +193,7 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
                     ? const Center(child: CircularProgressIndicator())
                     : TimeSlotTab(
                         timeSlotsValue: timeSlotModel!,
-                        selectedTime: widget.appointmentStatus == 'update'
-                            ? widget.appointment!.time
-                            : '')),
+                        selectedTime: _selectedTime)),
             const SizedBox(
               height: 10,
             ),
@@ -273,7 +272,6 @@ class _DoctorAppointmentState extends State<DoctorAppointment> {
 
   getTimeSlots() async {
     timeSlotModel = null;
-    _selectedTime = '';
     var cDate = DateFormat('yyyy-MM-dd').format(_selectedDateApi);
     var data = {
       "doctor_id": widget.doctor.id,

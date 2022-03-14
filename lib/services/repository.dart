@@ -89,4 +89,8 @@ class Repository {
   fetchTimeSlots({data}) async {
     return await _apiProvider.fetchTimeSlots(data: data);
   }
+
+  picUser({data}) async {
+    return await _apiProvider.picUser(data: data);
+  }
 }

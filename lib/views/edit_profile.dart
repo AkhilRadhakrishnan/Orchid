@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:orchid/helpers/colors.dart';
 import 'package:orchid/helpers/theme.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:orchid/views/home_screen.dart';
 
 import '../models/authentication.dart';
 import '../services/repository.dart';
@@ -82,6 +82,26 @@ class _EditProfileState extends State<EditProfile> {
       setState(() {
         _imageFile = pickedFile;
       });
+      var image = File(pickedFile!.path);
+      List<int> imageBytes = image.readAsBytesSync();
+      String base64Image = base64Encode(imageBytes);
+      var data = {"user_image": base64Image};
+      dynamic res = await Repository().picUser(data: data);
+      bool isError = false;
+      if (res['status']) {
+        Uint8List decodedBytes = base64.decode(base64Image);
+        setState(() {
+          userDetails.decodedImage = decodedBytes;
+        });
+        SharedPreferencesHelper.saveUserDetails(userDetails);
+      } else {
+        setState(() {
+          _imageFile = null;
+          isError = true;
+        });
+      }
+      var snackBar = resSnackBar(res['message'], isError);
+      ScaffoldMessenger.of(context!).showSnackBar(snackBar);
     } catch (e) {
       setState(() {
         _pickImageError = e;
@@ -94,7 +114,7 @@ class _EditProfileState extends State<EditProfile> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        toolbarHeight:40,
+        toolbarHeight: 40,
         backgroundColor: backgroundColor,
         elevation: 0,
         leading: Builder(
@@ -114,214 +134,231 @@ class _EditProfileState extends State<EditProfile> {
         ),
       ),
       body: SingleChildScrollView(
-          padding:
-              const EdgeInsets.all(15),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.white,
-                  ),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.28,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: imageFile == null
-                            ? Image.asset(
-                                'assets/images/user.png',
-                                width: MediaQuery.of(context).size.width * 0.25,
-                                height:
-                                    MediaQuery.of(context).size.width * 0.25,
-                              )
-                            : Image.file(
-                                File(imageFile!.path),
-                                fit: BoxFit.fill,
-                                width: MediaQuery.of(context).size.width * 0.25,
-                                height:
-                                    MediaQuery.of(context).size.width * 0.25,
-                              ),
-                      ),
-                      sizedBox,
-                      InkWell(
-                          child: const Text(
-                            "Edit Profile Image",
-                            style: TextStyle(
-                              color: primaryColor,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                          onTap: () {
-                            _onImageButtonPressed(context);
-                          }),
-                    ],
-                  ),
-                ),
-                sizedBox,
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Email *',
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ),
-                sizedBox,
-                SizedBox(
-                  height: 40,
-                  child: TextFormField(
-                    enabled: false,
-                    controller: mail,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: inputTextDecoration,
-                  ),
-                ),
-                sizedBox,
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Name *',
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ),
-                sizedBox,
-                SizedBox(
-                  height: 40,
-                  child: TextFormField(
-                    controller: name,
-                    decoration: inputTextDecoration,
-                  ),
-                ),
-                sizedBox,
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Mobile Number *',
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ),
-                sizedBox,
-                SizedBox(
-                  height: 40,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width * .14,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade500),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.only(left: 12, top: 15),
-                        child: const Text(
-                          "+974",
-                          style: TextStyle(fontSize: 14),
+          padding: const EdgeInsets.all(15),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: <
+                  Widget>[
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+              ),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.28,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: imageFile == null
+                          ? (userDetails.decodedImage != null
+                              ? Image.memory(
+                                  userDetails.decodedImage!,
+                                  fit: BoxFit.fill,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.25,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.25,
+                                )
+                              : (userDetails.image == null
+                                  ? Image.asset(
+                                      'assets/images/user.png',
+                                      width: MediaQuery.of(context).size.width *
+                                          0.25,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.25,
+                                    )
+                                  : Image.network(
+                                      userDetails.image!,
+                                      fit: BoxFit.fill,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.25,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.25,
+                                    )))
+                          : Image.file(
+                              File(imageFile!.path),
+                              fit: BoxFit.fill,
+                              width: MediaQuery.of(context).size.width * 0.25,
+                              height: MediaQuery.of(context).size.width * 0.25,
+                            )),
+                  sizedBox,
+                  InkWell(
+                      child: const Text(
+                        "Edit Profile Image",
+                        style: TextStyle(
+                          color: primaryColor,
+                          decoration: TextDecoration.underline,
                         ),
                       ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .77,
-                        child: TextFormField(
-                          enabled: false,
-                          controller: mobile,
-                          keyboardType: TextInputType.number,
-                          decoration: inputTextDecoration,
-                        ),
-                      ),
-                      sizedBox,
-                    ],
-                  ),
-                ),
-                sizedBox,
-                Row(
-                  children: [
-                    const Text(
-                      'Gender *',
-                      style: TextStyle(fontWeight: FontWeight.w500),
+                      onTap: () {
+                        _onImageButtonPressed(context);
+                      }),
+                ],
+              ),
+            ),
+            sizedBox,
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Email *',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ),
+            sizedBox,
+            SizedBox(
+              height: 40,
+              child: TextFormField(
+                enabled: false,
+                controller: mail,
+                keyboardType: TextInputType.emailAddress,
+                decoration: inputTextDecoration,
+              ),
+            ),
+            sizedBox,
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Name *',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ),
+            sizedBox,
+            SizedBox(
+              height: 40,
+              child: TextFormField(
+                controller: name,
+                decoration: inputTextDecoration,
+              ),
+            ),
+            sizedBox,
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Mobile Number *',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ),
+            sizedBox,
+            SizedBox(
+              height: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * .14,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade500),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.22),
-                    const Text(
-                      'DOB *',
-                      style: TextStyle(fontWeight: FontWeight.w500),
+                    padding: const EdgeInsets.only(left: 12, top: 15),
+                    child: const Text(
+                      "+974",
+                      style: TextStyle(fontSize: 14),
                     ),
-                  ],
-                ),
-                sizedBox,
-                SizedBox(
-                  height: 40,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                          padding: const EdgeInsets.only(left: 10),
-                          width: MediaQuery.of(context).size.width * .25,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade500),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: DropdownButton<String>(
-                            value: genderValue,
-                            items: <String>['Male', 'Female', 'Others']
-                                .map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                genderValue = newValue!;
-                              });
-                            },
-                          )
-                          // TextFormField(
-                          //   controller: name,
-                          //   decoration: inputTextDecoration,
-                          // ),
-                          ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .59,
-                        child: TextFormField(
-                          readOnly: true,
-                          controller: dobDate,
-                          decoration: inputTextDecoration,
-                          onTap: () async {
-                            var date = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(1900),
-                                lastDate: DateTime(2100));
-                            dobDate.text = date.toString().substring(0, 10);
-                          },
-                        ),
-                      ),
-                    ],
                   ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .77,
+                    child: TextFormField(
+                      enabled: false,
+                      controller: mobile,
+                      keyboardType: TextInputType.number,
+                      decoration: inputTextDecoration,
+                    ),
+                  ),
+                  sizedBox,
+                ],
+              ),
+            ),
+            sizedBox,
+            Row(
+              children: [
+                const Text(
+                  'Gender *',
+                  style: TextStyle(fontWeight: FontWeight.w500),
                 ),
-                // const Text(
-                //     '* We will send a 4 digit verification code by SMS on your mobile number.'),
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: isLoading
-                      ? null
-                      : () {
-                          saveProfile();
+                SizedBox(width: MediaQuery.of(context).size.width * 0.22),
+                const Text(
+                  'DOB *',
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+            sizedBox,
+            SizedBox(
+              height: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                      padding: const EdgeInsets.only(left: 10),
+                      width: MediaQuery.of(context).size.width * .25,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade500),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: DropdownButton<String>(
+                        value: genderValue,
+                        items: <String>['Male', 'Female', 'Others']
+                            .map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            genderValue = newValue!;
+                          });
                         },
-                  child: const Text(
-                    "Save",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                      )
+                      // TextFormField(
+                      //   controller: name,
+                      //   decoration: inputTextDecoration,
+                      // ),
+                      ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .59,
+                    child: TextFormField(
+                      readOnly: true,
+                      controller: dobDate,
+                      decoration: inputTextDecoration,
+                      onTap: () async {
+                        var date = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1900),
+                            lastDate: DateTime(2100));
+                        dobDate.text = date.toString().substring(0, 10);
+                      },
+                    ),
                   ),
-                  style: elevatedButton(MediaQuery.of(context).size.width),
-                ),
-              ])),
+                ],
+              ),
+            ),
+            // const Text(
+            //     '* We will send a 4 digit verification code by SMS on your mobile number.'),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      saveProfile();
+                    },
+              child: const Text(
+                "Save",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+              ),
+              style: elevatedButton(MediaQuery.of(context).size.width),
+            ),
+          ])),
     );
   }
 

@@ -133,6 +133,8 @@ class _TimeSlotTabState extends State<TimeSlotTab>
                                 selectedTime = pm;
                                 DoctorAppointment.of(context)?.selectedTime =
                                     selectedTime;
+                                ProcedurePage.of(context)?.selectedTime =
+                                    selectedTime;
                               });
                             },
                             child: Container(
@@ -140,9 +142,7 @@ class _TimeSlotTabState extends State<TimeSlotTab>
                                   top: 10, right: 10, bottom: 10),
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: selectedTime ==
-                                        widget.timeSlotsValue.timeslots?.pm!
-                                            .elementAt(index)
+                                color: selectedTime == pm
                                     ? primaryColor
                                     : Colors.white,
                                 borderRadius: const BorderRadius.all(
